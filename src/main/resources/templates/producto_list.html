@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head th:replace="/fragments/head :: head"></head>
+
+<body>
+
+    <nav th:replace="/fragments/navbar :: nav"></nav>
+    
+    <div th:if="${error != null}" class="card text-white bg-danger mb-3 mensajeError">
+        <div class="card-body">
+            <h5 class="card-title">Error 👎</h5>
+            <p class="card-text" th:text="${error}"></p>
+        </div>
+    </div>
+    <div th:if="${exito != null}" class="card text-white bg-success mb-3 mt-3 mensajeExito">
+        <div class="card-body">
+            <h5 class="card-title">Exito!</h5>
+            <p class="card-text" th:text="${exito}"></p>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="productoSelect">Producto:</label>
+                <select id="productoSelect" class="form-control">
+                    <option value="">Seleccionar Producto</option>
+                    <option th:each="producto : ${productos}"
+                            th:value="${producto.codigo}"
+                            th:text="${producto.descripcion}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="rubroSelect">Rubro:</label>
+                <select id="rubroSelect" class="form-control">
+                    <option value="">Seleccionar Rubro</option>
+                    <option th:each="rubro : ${rubros}"
+                            th:value="${rubro.id}"
+                            th:text="${rubro.nombre}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="subRubroSelect">Subrubro:</label>
+                <select id="subRubroSelect" class="form-control">
+                    <option value="">Seleccionar Subrubro</option>
+                    <option th:each="subRubro : ${subRubros}"
+                            th:value="${subRubro.id}"
+                            th:text="${subRubro.nombre}" 
+                            th:attr="data-rubro-id=${subRubro.rubro.id}">
+                    </option>
+                </select>
+            </div>
+        </div>
+<a th:href="@{/producto/lista}" class="btn btn-secondary mt-2">Reiniciar filtros</a>
+
+    <br>
+    <br>
+    
+    <table class="table table-dark">
+        <thead>
+            <tr>
+                <th scope="col">Código</th>
+                <th scope="col">Producto</th>
+                <th scope="col">Rubro</th>
+                <th scope="col">Subrubro</th>
+                <th scope="col">Costo</th>
+                <th scope="col">Precio de venta</th>
+                <th scope="col">Acciones</th>
+                <!--<th scope="col" sec:authorize="hasRole('ADMIN')" >Acciones</th>-->
+
+            </tr>
+        </thead>
+        <tbody id="productoTableBody">
+            <tr th:each="producto : ${productos}">
+                <th scope="row" th:text="${producto.codigo}"></th>
+                <td th:text="${producto.descripcion}" th:attr="data-producto-id=${producto.codigo}"></td>
+                <td th:text="${producto.rubro.nombre}" th:attr="data-rubro-id=${producto.rubro.id}"></td>
+                <td th:text="${producto.subRubro.nombre}" th:attr="data-subrubro-id=${producto.subRubro.id}"></td>
+                <td th:text="${producto.costo}"></td>
+                <td th:text="${producto.precioDeVenta}"></td>
+                
+                <td th:attr="data-codigo-barra=${producto.codigo}">
+                <a th:href="@{/producto/registrar/__${producto.codigo}__}">
+                    <i class="fas fa-feather-alt"></i> Modificar/Eliminar
+                </a>
+            </td>
+            </tr>
+        </tbody>
+
+
+    </table>
+
+    </div>
+
+
+        <section class=" text-center container">
+            <div class="row mt-3">
+                <div class="divVolver">
+                    <a th:href="@{/}" class="btn btn-secondary my-2 botonVolver botones">Volver</a>
+                </div>
+            </div>
+        </section>
+
+    <footer th:replace= "/fragments/footer :: footer"></footer>
+
+    <script src="/producto_list.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
