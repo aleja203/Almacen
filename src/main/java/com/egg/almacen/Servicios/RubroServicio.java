@@ -5,12 +5,16 @@ import com.egg.almacen.Entidades.Rubro;
 import com.egg.almacen.Excepciones.MiException;
 import com.egg.almacen.Repositorios.ProductoRepositorio;
 import com.egg.almacen.Repositorios.RubroRepositorio;
+import com.egg.almacen.Repositorios.SubRubroRepositorio;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
 
 @Service
@@ -22,6 +26,9 @@ public class RubroServicio {
     @Autowired
     ProductoRepositorio productoRepositorio;
 
+    @Autowired
+    SubRubroRepositorio subRubroRepositorio;
+    
     @Transactional
     public void crearRubro(String nombre) throws MiException {
 
@@ -44,16 +51,41 @@ public class RubroServicio {
         }
     }
     @Transactional
-    public void eliminarRubro(String id) throws MiException {
-        
-            Rubro rubro = rubroRepositorio.findById(id).orElseThrow(() -> new MiException("Rubro no encontrado"));
+public void eliminarRubro(String id) throws MiException {
+    // Buscar el rubro por id
+    Rubro rubro = rubroRepositorio.findById(id).orElseThrow(() -> new MiException("Rubro no encontrado"));
 
-            long productosAsociados = productoRepositorio.countByRubro(rubro);
-            if (productosAsociados > 0) {
-                throw new MiException("No se puede eliminar el rubro porque tiene productos asociados.");
-            }
-            rubroRepositorio.delete(rubro);
+    // Verificar si el rubro tiene subrubros asociados
+    if (subRubroRepositorio.existsByRubroId(id)) {
+        throw new MiException("El rubro no se puede eliminar porque tiene subrubros asociados.");
     }
+
+    // Verificar si el rubro tiene productos asociados
+    if (productoRepositorio.existsByRubroId(id)) {
+        throw new MiException("El rubro no se puede eliminar porque tiene productos asociados.");
+    }
+
+    // Si no tiene asociaciones, eliminar el rubro
+    rubroRepositorio.delete(rubro);
+    System.out.println("Estoy en el servicio");
+}
+    
+//    @Transactional
+//    public void eliminarRubro(String id) throws MiException {
+//        try {
+//            Optional<Rubro> optionalRubro = rubroRepositorio.findById(id);
+//            Rubro rubro = optionalRubro.get();
+//            
+//            
+//            rubroRepositorio.delete(rubro);
+//            System.out.println("PRUEBA DE INVOCACION");
+//            throw new MiException("No se puede eliminar el rubro porque tiene subrubros u otras dependencias asociadas.");
+//        } catch (Exception e) {
+//            System.out.println("Error al eliminar el rubro: " + e.getMessage());
+//            throw new MiException("No se puede eliminar el rubro porque tiene subrubros u otras dependencias asociadas.");
+//          }
+//    }
+
     
     public List<Rubro> listarRubros(){
         

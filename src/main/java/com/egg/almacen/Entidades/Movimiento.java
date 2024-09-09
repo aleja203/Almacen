@@ -2,11 +2,14 @@
 package com.egg.almacen.Entidades;
 
 import java.util.Date;
+import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -14,9 +17,9 @@ import javax.persistence.TemporalType;
 public class Movimiento {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     @ManyToOne
+    @JoinColumn(name = "producto_codigo", referencedColumnName = "codigo")
     private Producto producto;
     @ManyToOne
     private Proveedor proveedor;
@@ -30,6 +33,11 @@ public class Movimiento {
     public Movimiento() {
     }
 
+    @PrePersist
+    public void generarId() {
+        this.id = UUID.randomUUID().toString();
+    }
+    
     public String getId() {
         return id;
     }

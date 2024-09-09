@@ -85,4 +85,12 @@
             }
         }
     
+    @Transactional
+    public void eliminarSubRubro(String id) throws MiException {
+        
+            SubRubro subRubro = subRubroRepositorio.findById(id).orElseThrow(() -> new MiException("subrubro no encontrado"));
+
+            subRubroRepositorio.delete(subRubro);
+    }
+    
     }

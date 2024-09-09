@@ -84,7 +84,7 @@
                 <td th:text="${producto.precioDeVenta}"></td>
                 
                 <td th:attr="data-codigo-barra=${producto.codigo}">
-                <a th:href="@{/producto/registrar/__${producto.codigo}__}">
+                <a th:href="@{/producto/modificar/__${producto.codigo}__}">
                     <i class="fas fa-feather-alt"></i> Modificar/Eliminar
                 </a>
             </td>

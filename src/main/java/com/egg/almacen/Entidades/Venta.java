@@ -2,11 +2,13 @@
 package com.egg.almacen.Entidades;
 
 import java.util.Date;
+import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -14,7 +16,6 @@ import javax.persistence.TemporalType;
 public class Venta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     @ManyToOne
     private Producto producto;
@@ -27,6 +28,11 @@ public class Venta {
     public Venta() {
     }
 
+    @PrePersist
+    public void generarId() {
+        this.id = UUID.randomUUID().toString();
+    }
+    
     public String getId() {
         return id;
     }

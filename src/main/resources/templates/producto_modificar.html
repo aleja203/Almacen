@@ -3,7 +3,7 @@
 
     <head>
         <meta charset="utf-8">
-        <title>Registro de Productos</title>
+        <title>Modificar Productos</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
@@ -29,23 +29,22 @@
 
         <div class="container-fluid m-5 contenedor">
 
-            <form class="formulario row g-3" action="/producto/registro" method="POST">
+            <form class="formulario row g-3" th:action="@{/producto/modificar/__${producto.codigo}__}" method="POST">
 
-                <div class="col-md-6">
-                    <label for="codigo" class="mb-2">Código</label>
-                    <input type="text" class="form-control" id="codigo" name="codigo" placeholder="Código" autofocus>
-                </div>
+                <input hidden th:value="${producto.codigo}" name="id">
+                
                 <div class="col-md-6">
                     <label for="descripcion" class="mb-2">Descripción</label>
-                    <input type="text" class="form-control" id="descripcion" name="descripcion" placeholder="Descripción" oninput="this.value = this.value.toUpperCase();">
+                    <input th:value="${producto.descripcion}" type="text" class="form-control" name="nombre" oninput="this.value = this.value.toUpperCase();">
                 </div>
                 <div class="col-md-6">
                     <label for="costo" class="mb-2">Costo</label>
-                    <input type="number" class="form-control" id="costo" name="costo" placeholder="Costo">
+                    <input th:value="${producto.costo}" type="number" class="form-control" id="costo" name="costo" oninput="this.value = this.value.toUpperCase();">
                 </div>
                 <div class="col-md-6">
                     <label for="precio_venta" class="mb-2">Precio de Venta</label>
-                    <input type="number" class="form-control" id="precio_venta" name="precioDeVenta" placeholder="Precio de Venta">
+                    <!--<input type="number" class="form-control" id="precio_venta" name="precioDeVenta" placeholder="Precio de Venta">-->
+                    <input th:value="${producto.precioDeVenta}" type="number" class="form-control" id="precio_venta" name="precio_venta" oninput="this.value = this.value.toUpperCase();">
                 </div>
 
                         <div class="col-md-6">
@@ -54,7 +53,8 @@
                                 <option value="">Seleccionar Rubro</option>
                                 <option th:each="rubro : ${rubros}"
                                         th:value="${rubro.id}"
-                                        th:text="${rubro.nombre}">
+                                        th:text="${rubro.nombre}"
+                                        th:selected="${rubro.id} == ${producto.rubro.id}">
                                 </option>
                             </select>
                         </div>
@@ -66,22 +66,32 @@
                                 <option th:each="subRubro : ${subRubros}"
                                         th:value="${subRubro.id}"
                                         th:text="${subRubro.nombre}" 
+                                        th:selected="${subRubro.id} == ${producto.subRubro.id}"
                                         th:attr="data-rubro-id=${subRubro.rubro.id}">
                                 </option>
                             </select>
                         </div>
+                    
 
-                <button type="submit" class="btn btn-primary"> Guardar </button>
+                <button type="submit" class="btn btn-primary"> Modificar </button>
+            
+                <a th:href="@{/producto/eliminar/{codigo}(codigo=${producto.codigo})}" class="btn btn-danger mt-3"
+                   onclick="return confirmDelete()">Eliminar</a>
+                <script>
+                function confirmDelete() {
+                    return confirm("¿Estás seguro de que deseas eliminar este subrubro?");
+                }
+            </script>
+            
             </form>
-
-            <!--<section class=" text-center container">-->
+            
             <div class="row mt-3">
                 <div class="divVolver">
                     <a th:href="@{/}" class="btn btn-secondary my-2 botonVolver botones">Volver</a>
                 </div>
             </div>
-            <!--</section>-->
-        </div>
+        </div>    
+        
 
         <footer th:replace= "/fragments/footer :: footer"></footer>
 

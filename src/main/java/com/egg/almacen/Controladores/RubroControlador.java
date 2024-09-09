@@ -70,38 +70,31 @@ public class RubroControlador {
     @PostMapping("/modificar/{id}")
     public String modificar(@PathVariable String id, @RequestParam String nombre, ModelMap modelo, RedirectAttributes redirectAttributes) {
         try {
-            
             rubroServicio.modificarRubro(nombre, id);
-            
-            Optional<Rubro> rubroOptional = rubroRepositorio.findById(id);
-            
-            modelo.put("rubro", rubroOptional.get());
             redirectAttributes.addFlashAttribute("exito", "Rubro actualizado exitosamente");
-            
-            return "redirect:../lista";
+            return "redirect:/rubro/lista";
         } catch (MiException ex) {
-            
-             Optional<Rubro> rubroOptional = rubroRepositorio.findById(id);
-                        
-            modelo.put("rubro", rubroOptional.get());
+            Optional<Rubro> rubroOptional = rubroRepositorio.findById(id);
+            if (rubroOptional.isPresent()) {
+                modelo.put("rubro", rubroOptional.get());
+            }
             modelo.put("error", ex.getMessage());
-            modelo.addAttribute("id", id);
-            modelo.addAttribute("nombre", nombre);
-            return "rubro_modificar.html";
+            return "rubro_modificar";
         }
     }
+
+
     
     @GetMapping("/eliminar/{id}")
-    public String eliminarRubro(@PathVariable String id, RedirectAttributes redirectAttributes) throws MiException {
+    public String eliminarRubro(@PathVariable String id, RedirectAttributes redirectAttributes) {
         try {
             rubroServicio.eliminarRubro(id);
-            redirectAttributes.addFlashAttribute("exito", "El rubro ha sido eliminado con exitosamente.");
-        }
-        catch (MiException e) {
+            redirectAttributes.addFlashAttribute("exito", "El rubro ha sido eliminado exitosamente.");
+        } catch (MiException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
 
         return "redirect:/rubro/lista";
     }
-    
+
 }

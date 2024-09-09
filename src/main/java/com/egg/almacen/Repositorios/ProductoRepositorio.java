@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductoRepositorio extends JpaRepository<Producto, String>{
+    
+boolean existsByRubroId(String rubroId);
 
 @Query("SELECT l FROM Producto l WHERE l.descripcion = :descripcion")
 public Producto buscarPorDescripcion(@Param("descripcion")String descripcion);

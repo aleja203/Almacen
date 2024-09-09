@@ -119,5 +119,17 @@ public class SubRubroControlador {
             return "subRubro_modificar.html";
         }
     }
+ 
+    @GetMapping("/eliminar/{id}")
+    public String eliminarSubRubro(@PathVariable String id, RedirectAttributes redirectAttributes) {
+        try {
+            subRubroServicio.eliminarSubRubro(id);
+            redirectAttributes.addFlashAttribute("exito", "El subrubro ha sido eliminado exitosamente.");
+        } catch (MiException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/subRubro/lista";
+    }
     
 }

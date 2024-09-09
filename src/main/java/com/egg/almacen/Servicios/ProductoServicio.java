@@ -64,7 +64,7 @@ public class ProductoServicio {
     }
     
     @Transactional
-    public void modificarProducto(String codigo, String descripcion, String idRubro, String idSubRubro, Double costo, Double precioDeVenta, Date alta)throws MiException{
+    public void modificarProducto(String codigo, String descripcion, String idRubro, String idSubRubro, Double costo, Double precioDeVenta)throws MiException{
         
         validar(codigo, descripcion, idRubro, idSubRubro);
         

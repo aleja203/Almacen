@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SubRubroRepositorio extends JpaRepository<SubRubro, String>{
     
+    boolean existsByRubroId(String rubroId);
+    
 }

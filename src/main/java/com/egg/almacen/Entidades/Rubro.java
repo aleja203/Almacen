@@ -3,10 +3,12 @@ package com.egg.almacen.Entidades;
 
 
 
+import java.util.Set;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -19,6 +21,9 @@ public class Rubro {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
     private String nombre;
+
+    @OneToMany(mappedBy = "rubro")
+    private Set<Producto> productos;
 
     public Rubro() {
     }
