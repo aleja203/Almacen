@@ -85,16 +85,20 @@ public class ProductoServicio {
         
         if (respuesta.isPresent()) {
             
-            Producto Producto = respuesta.get();
+            Producto producto = respuesta.get();
             
-            Producto.setDescripcion(descripcion);
+            producto.setDescripcion(descripcion);
             
-            Producto.setRubro(Rubro);
+            producto.setCosto(costo);
             
-            Producto.setSubRubro(SubRubro);
+            producto.setPrecioDeVenta(precioDeVenta);
+            
+            producto.setRubro(Rubro);
+            
+            producto.setSubRubro(SubRubro);
             
             
-            productoRepositorio.save(Producto);
+            productoRepositorio.save(producto);
         }
     }
     
@@ -123,4 +127,13 @@ public class ProductoServicio {
         }
     }
     
+    @Transactional
+    public void eliminarProducto(String codigo) throws MiException {
+
+        Producto producto = productoRepositorio.findById(codigo).orElseThrow(() -> new MiException("Producto no encontrado"));
+
+        
+        productoRepositorio.delete(producto);
+    }
+        
 }

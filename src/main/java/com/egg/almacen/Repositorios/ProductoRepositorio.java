@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface ProductoRepositorio extends JpaRepository<Producto, String>{
     
 boolean existsByRubroId(String rubroId);
+boolean existsBySubRubroId(String subRubroId);
 
 @Query("SELECT l FROM Producto l WHERE l.descripcion = :descripcion")
 public Producto buscarPorDescripcion(@Param("descripcion")String descripcion);

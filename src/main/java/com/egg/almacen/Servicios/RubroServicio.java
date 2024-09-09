@@ -70,22 +70,6 @@ public void eliminarRubro(String id) throws MiException {
     System.out.println("Estoy en el servicio");
 }
     
-//    @Transactional
-//    public void eliminarRubro(String id) throws MiException {
-//        try {
-//            Optional<Rubro> optionalRubro = rubroRepositorio.findById(id);
-//            Rubro rubro = optionalRubro.get();
-//            
-//            
-//            rubroRepositorio.delete(rubro);
-//            System.out.println("PRUEBA DE INVOCACION");
-//            throw new MiException("No se puede eliminar el rubro porque tiene subrubros u otras dependencias asociadas.");
-//        } catch (Exception e) {
-//            System.out.println("Error al eliminar el rubro: " + e.getMessage());
-//            throw new MiException("No se puede eliminar el rubro porque tiene subrubros u otras dependencias asociadas.");
-//          }
-//    }
-
     
     public List<Rubro> listarRubros(){
         

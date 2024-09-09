@@ -146,5 +146,17 @@ public class ProductoControlador {
             return "producto_modificar.html";
         }
     }
+
+    @GetMapping("/eliminar/{codigo}")
+    public String eliminarProducto(@PathVariable String codigo, RedirectAttributes redirectAttributes) {
+        try {
+            productoServicio.eliminarProducto(codigo);
+            redirectAttributes.addFlashAttribute("exito", "El producto ha sido eliminado exitosamente.");
+        } catch (MiException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/producto/lista";
+    }
     
 }

@@ -20,9 +20,11 @@
         @Autowired
         SubRubroRepositorio subRubroRepositorio;
         
-        
         @Autowired
         RubroRepositorio rubroRepositorio;
+        
+        @Autowired
+        ProductoRepositorio productoRepositorio;
     
         @Transactional
         public void crearSubRubro(String nombre, String idRubro) throws MiException {
@@ -88,7 +90,11 @@
     @Transactional
     public void eliminarSubRubro(String id) throws MiException {
         
-            SubRubro subRubro = subRubroRepositorio.findById(id).orElseThrow(() -> new MiException("subrubro no encontrado"));
+            SubRubro subRubro = subRubroRepositorio.findById(id).orElseThrow(() -> new MiException("Subrubro no encontrado"));
+        
+        if (productoRepositorio.existsBySubRubroId(id)) {
+            throw new MiException("El subrubro no se puede eliminar porque tiene productos asociados.");
+        }
 
             subRubroRepositorio.delete(subRubro);
     }

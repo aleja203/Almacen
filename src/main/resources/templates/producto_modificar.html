@@ -31,11 +31,13 @@
 
             <form class="formulario row g-3" th:action="@{/producto/modificar/__${producto.codigo}__}" method="POST">
 
+
+
                 <input hidden th:value="${producto.codigo}" name="id">
                 
                 <div class="col-md-6">
                     <label for="descripcion" class="mb-2">Descripción</label>
-                    <input th:value="${producto.descripcion}" type="text" class="form-control" name="nombre" oninput="this.value = this.value.toUpperCase();">
+                    <input th:value="${producto.descripcion}" type="text" class="form-control" name="descripcion" oninput="this.value = this.value.toUpperCase();">
                 </div>
                 <div class="col-md-6">
                     <label for="costo" class="mb-2">Costo</label>
@@ -44,7 +46,7 @@
                 <div class="col-md-6">
                     <label for="precio_venta" class="mb-2">Precio de Venta</label>
                     <!--<input type="number" class="form-control" id="precio_venta" name="precioDeVenta" placeholder="Precio de Venta">-->
-                    <input th:value="${producto.precioDeVenta}" type="number" class="form-control" id="precio_venta" name="precio_venta" oninput="this.value = this.value.toUpperCase();">
+                    <input th:value="${producto.precioDeVenta}" type="number" class="form-control" id="precioDeVenta" name="precioDeVenta" oninput="this.value = this.value.toUpperCase();">
                 </div>
 
                         <div class="col-md-6">
