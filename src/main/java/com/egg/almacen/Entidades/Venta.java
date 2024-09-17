@@ -2,12 +2,17 @@
 package com.egg.almacen.Entidades;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -16,53 +21,29 @@ import javax.persistence.TemporalType;
 public class Venta {
 
     @Id
-    private String id;
-    @ManyToOne
-    private Producto producto;
-    private Integer cantidad;
-    private Double precioVenta;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Temporal(TemporalType.DATE)
     private Date fecha;
-    private String detalle;
+
+    private String cliente;
+    private String observaciones;
+
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<DetalleVenta> detalles;
+    
+    private Double totalVenta;
 
     public Venta() {
     }
 
-    @PrePersist
-    public void generarId() {
-        this.id = UUID.randomUUID().toString();
-    }
-    
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public Double getPrecioVenta() {
-        return precioVenta;
-    }
-
-    public void setPrecioVenta(Double precioVenta) {
-        this.precioVenta = precioVenta;
     }
 
     public Date getFecha() {
@@ -73,13 +54,37 @@ public class Venta {
         this.fecha = fecha;
     }
 
-    public String getDetalle() {
-        return detalle;
+    public String getCliente() {
+        return cliente;
     }
 
-    public void setDetalle(String detalle) {
-        this.detalle = detalle;
+    public void setCliente(String cliente) {
+        this.cliente = cliente;
     }
 
-    
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public Set<DetalleVenta> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(Set<DetalleVenta> detalles) {
+        this.detalles = detalles;
+    }
+
+    public Double getTotalVenta() {
+        return totalVenta;
+    }
+
+    public void setTotalVenta(Double totalVenta) {
+        this.totalVenta = totalVenta;
+    }
+
+   
 }

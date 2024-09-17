@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductoRepositorio extends JpaRepository<Producto, String>{
     
+Producto findByCodigo(String codigo);
+    
 boolean existsByRubroId(String rubroId);
 boolean existsBySubRubroId(String subRubroId);
 

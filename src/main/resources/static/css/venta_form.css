@@ -44,16 +44,24 @@
     margin-top: 0 !important;
 }
 
-#formularioVenta .row:first-child button {
-    margin-top: 1.75rem !important; /* Ajusta el valor según sea necesario */
-}
+/*#formularioVenta .row:first-child button {
+    margin-top: 1.75rem !important;  Ajusta el valor según sea necesario 
+}*/
 
 
+
+/*#formularioVenta .row .col-md-1 button {
+    margin-top: 0 !important;
+    width: 100%;  Ajustar el tamaño del botón para que coincida con las demás columnas 
+}*/
 
 #formularioVenta .row .col-md-1 button {
     margin-top: 0 !important;
-    width: 100%; /* Ajustar el tamaño del botón para que coincida con las demás columnas */
+    width: 100%; /* Ajusta el tamaño del botón para que coincida con las demás columnas */
+    height: calc(2.5rem + 2px); /* Asegura que la altura del botón coincida con la de los inputs */
+    font-size: 1.5rem; /* Ajusta el tamaño del texto dentro del botón */
 }
+
 
 .agregar-fila-btn {
     height: 100%;
