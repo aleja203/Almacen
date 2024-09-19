@@ -84,7 +84,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="cliente" class="mb-2">Cliente</label>
-                    <input type="text" class="form-control" id="cliente" name="cliente">
+                    <input type="text" class="form-control" id="cliente" name="cliente" oninput="this.value = this.value.toUpperCase();">
                 </div>
             </div>
 
@@ -93,7 +93,7 @@
                 <div class="row align-items-end">
                     <div class="col-md-2">
                         <label for="codigo" class="mb-2">Código</label>
-                        <input type="text" class="form-control codigo-input" name="codigo">
+                        <input type="text" class="form-control codigo-input" name="codigo" readonly>
                     </div>
                     <div class="col-md-3">
                         <label for="productoSelect" class="mb-2">Producto</label>
@@ -127,7 +127,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="observaciones" class="mb-2">Observaciones</label>
-                    <input type="text" class="form-control" id="observaciones" name="observaciones">
+                    <input type="text" class="form-control" id="observaciones" name="observaciones" oninput="this.value = this.value.toUpperCase();">
                 </div>
             </div>
             <div class="row mb-3">

@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const ventaForm = document.getElementById("ventaForm");
     const formularioVenta = document.getElementById("formularioVenta");
     const totalVentaInput = document.getElementById("totalVenta");
+    let barcodeInput = "";
+    let barcodeTimer;
 
     // Función para actualizar el total al cambiar cantidad o precio
     function actualizarTotal(fila) {
@@ -35,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         newRow.innerHTML = `
             <div class="col-md-2">
-                <input type="text" class="form-control codigo-input" name="codigo" placeholder="Código">
+                <input type="text" class="form-control codigo-input" name="codigo" placeholder="Código" readonly>
             </div>
             <div class="col-md-3">
                 <select class="form-control producto-select" name="producto">
@@ -83,6 +85,22 @@ document.addEventListener("DOMContentLoaded", function () {
         totalVentaInput.value = totalVenta.toFixed(2); // Mostrar el total con 2 decimales
     }
 
+    // Función para verificar si una fila está completa
+    function filaCompleta(row) {
+        const codigo = row.querySelector('.codigo-input').value;
+        const producto = row.querySelector('.producto-select').value;
+        const cantidad = parseFloat(row.querySelector('.cantidad-input').value);
+        const precio = parseFloat(row.querySelector('.precio-input').value);
+        const total = parseFloat(row.querySelector('.total-input').value);
+
+        return codigo && producto && cantidad && precio && total;
+    }
+
+    // Función para verificar si hay al menos una fila completa
+    function hayFilaCompleta() {
+        return Array.from(formularioVenta.querySelectorAll(".row")).some(filaCompleta);
+    }
+
     // Función para filtrar por código de barra y seleccionar el producto
     function filtrarPorCodigoDeBarra(barcode, row) {
         const productoSelect = row.querySelector('.producto-select');
@@ -101,30 +119,31 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!productoEncontrado) {
             alert("Producto no encontrado para el código de barra: " + barcode);
         } else {
-            agregarFila(); // Agregar una nueva fila tras encontrar el producto
+            if (filaCompleta(row)) {
+                agregarFila(); // Agregar una nueva fila tras encontrar y completar el producto
+            }
         }
     }
 
-    // Manejar la entrada del código de barras
-    let barcodeInput = "";
-    let barcodeTimer;
-
+    // Manejar la entrada del código de barras desde cualquier parte de la vista
     document.addEventListener("keydown", function (e) {
         if (barcodeTimer) clearTimeout(barcodeTimer);
 
         if (e.key !== "Enter") {
             barcodeInput += e.key;
         } else {
-            // Evitar que la tecla Enter provoque el envío del formulario
-            e.preventDefault();
+            e.preventDefault(); // Evitar que la tecla Enter provoque el envío del formulario
+
             const currentRow = formularioVenta.lastElementChild;
             filtrarPorCodigoDeBarra(barcodeInput, currentRow);
             barcodeInput = "";
+
+            // No realizar el envío automático del formulario
         }
 
         barcodeTimer = setTimeout(() => {
             barcodeInput = "";
-        }, 200);
+        }, 200); // Limpiar el input después de un breve tiempo de inactividad
     });
 
     const agregarFilaBtn = ventaForm.querySelector('#agregarFila');
@@ -154,10 +173,9 @@ document.addEventListener("DOMContentLoaded", function () {
             cliente: formData.get("cliente"),
             observaciones: formData.get("observaciones"),
             totalVenta: parseFloat(formData.get("totalVenta")),
-            detalles: [] // Aquí deberás agregar la lógica para convertir los detalles en un array de objetos
+            detalles: []
         };
 
-        // Añadir detalles al objeto venta
         formularioVenta.querySelectorAll(".row").forEach(row => {
             const codigo = row.querySelector('.codigo-input').value;
             const producto = row.querySelector('.producto-select').value;
@@ -165,14 +183,15 @@ document.addEventListener("DOMContentLoaded", function () {
             const precioDeVenta = parseFloat(row.querySelector('.precio-input').value);
             const total = parseFloat(row.querySelector('.total-input').value);
 
-            if (codigo || producto || cantidad || precioDeVenta || total) {
-            venta.detalles.push({
-                producto: codigo,
-                cantidad: cantidad,
-                precioVenta: precioDeVenta,
-                total: total
-            });
-        }
+            // Agregar solo filas completas
+            if (codigo && producto && cantidad && precioDeVenta && total) {
+                venta.detalles.push({
+                    producto: codigo,
+                    cantidad: cantidad,
+                    precioVenta: precioDeVenta,
+                    total: total
+                });
+            }
         });
 
         fetch("/venta/registro", {
@@ -183,23 +202,29 @@ document.addEventListener("DOMContentLoaded", function () {
             body: JSON.stringify(venta)
         })
         .then(response => response.json())
-        .then(data => console.log("Success:", data))
-        .catch((error) => console.error("Error:", error));
+        .then(data => {
+            if (data.message) {
+                alert(data.message);
+                window.location.href = "/venta/registrar";
+            } else if (data.error) {
+                alert(data.error);
+                window.location.href = "/venta/registrar";
+            }
+        })
+        .catch((error) => console.error("Error en fetch:", error));
     }
-    
-//function enviarDatos() {
-//    fetch("/venta/registro", {
-//        method: "POST"
-//    })
-//    .then(response => response.text()) // Procesar la respuesta como texto
-//    .then(data => console.log("Success:", data)) // Imprimir la respuesta
-//    .catch(error => console.error("Error:", error)); // Manejar errores
-//}
-    
-    // Agregar el manejador de eventos al formulario
+
     ventaForm.addEventListener("submit", function (event) {
         event.preventDefault(); // Evitar el envío por defecto del formulario
-        enviarDatos(); // Llamar a la función para enviar los datos
+
+        try {
+            if (hayFilaCompleta()) {
+                enviarDatos(); // Llamar a la función para enviar los datos si hay al menos una fila completa
+            } else {
+                throw new Error("Excepción: No hay productos seleccionados o escaneados.");
+            }
+        } catch (error) {
+            alert(error.message); // Mostrar el mensaje de excepción
+        }
     });
-    
 });
