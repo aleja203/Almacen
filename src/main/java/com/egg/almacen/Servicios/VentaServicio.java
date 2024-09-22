@@ -4,10 +4,12 @@ package com.egg.almacen.Servicios;
 
 import com.egg.almacen.DTO.DetalleVentaDTO;
 import com.egg.almacen.DTO.VentaDTO;
+import com.egg.almacen.Entidades.Cliente;
 import com.egg.almacen.Entidades.DetalleVenta;
 import com.egg.almacen.Entidades.Venta;
 import com.egg.almacen.Entidades.Producto;
 import com.egg.almacen.Excepciones.MiException;
+import com.egg.almacen.Repositorios.ClienteRepositorio;
 import com.egg.almacen.Repositorios.DetalleVentaRepositorio;
 import com.egg.almacen.Repositorios.ProductoRepositorio;
 import com.egg.almacen.Repositorios.VentaRepositorio;
@@ -34,18 +36,27 @@ public class VentaServicio {
     private DetalleVentaRepositorio detalleVentaRepositorio;
     @Autowired
     private MovimientoServicio movimientoServicio;
-    
-    
-
+    @Autowired
+    private ClienteRepositorio clienteRepositorio;
 
     @Transactional
     public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
         Map<String, Object> response = new HashMap<>();
 
         try {
-            // Crear la entidad Venta
             Venta venta = new Venta();
-            venta.setCliente(ventaDTO.getCliente());
+
+            // Verificar si el clienteId no es nulo ni vacío
+            if (ventaDTO.getClienteId() != null) {
+                // Buscar el cliente por su ID
+                Cliente cliente = clienteRepositorio.findById(ventaDTO.getClienteId())
+                        .orElseThrow(() -> new RuntimeException("Cliente no encontrado: " + ventaDTO.getClienteId()));
+                System.out.println("El cliente es: " + ventaDTO.getClienteId());
+                // Asignar el cliente encontrado
+                venta.setCliente(cliente);
+            }
+
+            // Continuar con la asignación de los demás campos de la venta
             venta.setObservaciones(ventaDTO.getObservaciones());
             venta.setTotalVenta(ventaDTO.getTotalVenta());
             venta.setFecha(new Date());  // Establecer la fecha actual
@@ -77,15 +88,13 @@ public class VentaServicio {
             // Guardar la entidad Venta en la base de datos
             ventaRepositorio.save(venta);
 
-            // Devolvemos un mensaje de éxito
+            // Devolver un mensaje de éxito
             response.put("message", "Venta registrada exitosamente.");
             return response;
-
         } catch (RuntimeException e) {
-            // Captura de errores específicos (Producto no encontrado)
+            // Captura de errores específicos (Producto no encontrado o Cliente no encontrado)
             response.put("error", "Error al registrar la venta: " + e.getMessage());
             return response;
-
         } catch (Exception e) {
             // Captura de otros errores generales
             response.put("error", "Error inesperado al registrar la venta.");

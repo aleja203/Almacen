@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class VentaDTO {
     
-    private String cliente;
+    private Long clienteId;
     private String observaciones;
     private double totalVenta;
     private Set<DetalleVentaDTO> detalles;
@@ -14,12 +14,12 @@ public class VentaDTO {
     public VentaDTO() {
     }
 
-    public String getCliente() {
-        return cliente;
+    public Long getClienteId() {
+        return clienteId;
     }
 
-    public void setCliente(String cliente) {
-        this.cliente = cliente;
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
     }
 
     public String getObservaciones() {
@@ -45,6 +45,17 @@ public class VentaDTO {
     public void setDetalles(Set<DetalleVentaDTO> detalles) {
         this.detalles = detalles;
     }
+
+    @Override
+public String toString() {
+    return "VentaDTO{" +
+            "cliente=" + clienteId +
+            ", observaciones='" + observaciones + '\'' +
+            ", totalVenta=" + totalVenta +
+            ", detalles=" + detalles +
+            '}';
+}
+
 
     
 }

@@ -8,31 +8,28 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-
 @Entity
-public class DetalleVenta {
-
+public class DetalleIngreso {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "venta_id")
-    private Venta venta;
+    @JoinColumn(name = "ingresoDeMercaderia_id")
+    private IngresoDeMercaderia ingresoDeMercaderia;
 
     @ManyToOne
     @JoinColumn(name = "producto_id")
     private Producto producto;
 
     private Double cantidad;
-    private Double precioVenta;
+    private Double precioCompra;
     private Double total;
 
-    public DetalleVenta() {
+    public DetalleIngreso() {
     }
 
-    
-    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -41,12 +38,12 @@ public class DetalleVenta {
         this.id = id;
     }
 
-    public Venta getVenta() {
-        return venta;
+    public IngresoDeMercaderia getIngresoDeMercaderia() {
+        return ingresoDeMercaderia;
     }
 
-    public void setVenta(Venta venta) {
-        this.venta = venta;
+    public void setIngresoDeMercaderia(IngresoDeMercaderia ingresoDeMercaderia) {
+        this.ingresoDeMercaderia = ingresoDeMercaderia;
     }
 
     public Producto getProducto() {
@@ -65,12 +62,12 @@ public class DetalleVenta {
         this.cantidad = cantidad;
     }
 
-    public Double getPrecioVenta() {
-        return precioVenta;
+    public Double getPrecioCompra() {
+        return precioCompra;
     }
 
-    public void setPrecioVenta(Double precioVenta) {
-        this.precioVenta = precioVenta;
+    public void setPrecioCompra(Double precioCompra) {
+        this.precioCompra = precioCompra;
     }
 
     public Double getTotal() {
@@ -80,4 +77,8 @@ public class DetalleVenta {
     public void setTotal(Double total) {
         this.total = total;
     }
+
+
+    
+    
 }

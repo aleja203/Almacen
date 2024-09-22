@@ -127,7 +127,7 @@ public class ProductoControlador {
             modelo.put("producto", productoOptional.get());
             modelo.addAttribute("rubros", rubros);
             modelo.addAttribute("subRubros", subRubros);
-            redirectAttributes.addFlashAttribute("exito", "Subrubro actualizado exitosamente");
+            redirectAttributes.addFlashAttribute("exito", "Producto actualizado exitosamente");
             
             productoServicio.modificarProducto(codigo, descripcion, idRubro, idSubRubro, costo, precioDeVenta);
             

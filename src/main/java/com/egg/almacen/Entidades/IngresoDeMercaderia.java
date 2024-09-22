@@ -2,12 +2,16 @@
 package com.egg.almacen.Entidades;
 
 import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -16,76 +20,35 @@ import javax.persistence.TemporalType;
 public class IngresoDeMercaderia {
     
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @Temporal(TemporalType.DATE)
+    private Date fecha; 
+    
+    @ManyToOne
+    @JoinColumn(name = "proveedor_id")
+    private Proveedor proveedor;
+    
+    private String observaciones;
     
     @ManyToOne
     private Producto producto;
     
-    private Integer cantidad;
-    private Double costo;
+    @OneToMany(mappedBy = "IngresoDeMercaderia", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<DetalleIngreso> detalles;
     
-    @ManyToOne
-    private Proveedor proveedor;
+    private Double totalCompra;      
     
-    private String detalle;
-    
-    @Temporal(TemporalType.DATE)
-    private Date fecha;
-
     public IngresoDeMercaderia() {
     }
 
-    @PrePersist
-    public void generarId() {
-        this.id = UUID.randomUUID().toString();
-    }
-    
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public Double getCosto() {
-        return costo;
-    }
-
-    public void setCosto(Double costo) {
-        this.costo = costo;
-    }
-
-    public Proveedor getProveedor() {
-        return proveedor;
-    }
-
-    public void setProveedor(Proveedor proveedor) {
-        this.proveedor = proveedor;
-    }
-
-    public String getDetalle() {
-        return detalle;
-    }
-
-    public void setDetalle(String detalle) {
-        this.detalle = detalle;
     }
 
     public Date getFecha() {
@@ -96,5 +59,46 @@ public class IngresoDeMercaderia {
         this.fecha = fecha;
     }
 
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
+
+    public Set<DetalleIngreso> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(Set<DetalleIngreso> detalles) {
+        this.detalles = detalles;
+    }
+
+    public Double getTotalCompra() {
+        return totalCompra;
+    }
+
+    public void setTotalCompra(Double totalCompra) {
+        this.totalCompra = totalCompra;
+    }
+
+    
     
 }

@@ -26,68 +26,26 @@
         </div>
     </div>
   
-<!--    <div class="container-fluid">
-
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="cliente" class="mb-2">Cliente</label>
-                <input type="text" class="form-control" id="cliente" name="cliente">
-            </div>
-        </div>
-
-        <div id="formularioVenta">
-             Primera fila 
-            <div class="row align-items-end">
-                <div class="col-md-2">
-                    <label for="codigo" class="mb-2">Código</label>
-                    <input type="text" class="form-control codigo-input" name="codigo">
-                </div>
-                <div class="col-md-3">
-                    <label for="productoSelect" class="mb-2">Producto</label>
-                    <select class="form-control producto-select">
-                        <option value="">Seleccionar Producto</option>
-                        <option th:each="producto : ${productos}"
-                                th:value="${producto.codigo}"
-                                th:text="${producto.descripcion}"
-                                th:data-preciodeventa="${producto.precioDeVenta}">
-                        </option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label for="cantidad" class="mb-2">Cantidad</label>
-                    <input type="number" class="form-control cantidad-input" name="cantidad" value="1">
-                </div>
-                <div class="col-md-2">
-                    <label for="precioDeVenta" class="mb-2">Precio</label>
-                    <input type="number" class="form-control precio-input" name="precioDeVenta" readonly>
-                </div>
-                 Columna Total 
-                <div class="col-md-2">
-                    <label for="total" class="mb-2">Total</label>
-                    <input type="number" class="form-control total-input" name="total">
-                </div>
-                <div class="col-md-1">
-                    <button id="agregarFila" class="btn btn-primary btn-icon">+</button>
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="observaciones" class="mb-2">Observaciones</label>
-                <input type="text" class="form-control" id="observaciones" name="observaciones">
-            </div>
-        </div>
-    </div>-->
-
 <div class="container-fluid">
         <form id="ventaForm" method="POST">
-            <div class="row mb-3">
+<!--            <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="cliente" class="mb-2">Cliente</label>
                     <input type="text" class="form-control" id="cliente" name="cliente" oninput="this.value = this.value.toUpperCase();">
                 </div>
-            </div>
+            </div>-->
 
+            <div class="col-md-6">
+                <label for="clienteSelect" class="mb-2">Cliente</label>
+                <select name="cliente" id="clienteSelect" class="form-control">
+                    <option value="">Seleccionar Cliente</option>
+                    <option th:each="cliente : ${clientes}"
+                            th:value="${cliente.dni}"
+                            th:text="${cliente.nombre}">
+                    </option>
+                </select>
+            </div>
+            <br>
             <div id="formularioVenta">
                 <!-- Primera fila -->
                 <div class="row align-items-end">
@@ -108,7 +66,8 @@
                     </div>
                     <div class="col-md-2">
                         <label for="cantidad" class="mb-2">Cantidad</label>
-                        <input type="number" class="form-control cantidad-input" name="cantidad" value="1">
+                        <!--<input type="number" class="form-control cantidad-input" name="cantidad" value="1">-->
+                        <input type="number" class="form-control cantidad-input" name="cantidad" value="1" step="0.01" min="0">
                     </div>
                     <div class="col-md-2">
                         <label for="precioDeVenta" class="mb-2">Precio</label>

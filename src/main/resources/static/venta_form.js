@@ -28,6 +28,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const codigoProducto = productoSeleccionado.value;
         row.querySelector('.codigo-input').value = codigoProducto;
         actualizarTotal(row);
+        verificarFilaCompleta(row);
+        // Solo agregar una nueva fila si la fila actual está completa y aún no se ha agregado una fila
+        if (filaCompleta(row) && !row.classList.contains('fila-agregada')) {
+            agregarFila(); // Agregar una nueva fila solo si la actual está completa
+            row.classList.add('fila-agregada'); // Marca esta fila como completa para evitar agregar filas adicionales
+        }
     }
 
     // Función para agregar una nueva fila al formulario
@@ -45,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="number" class="form-control cantidad-input" name="cantidad" value="1">
+                <input type="number" class="form-control cantidad-input" name="cantidad" value="1" step="0.01" min="0">
             </div>
             <div class="col-md-2">
                 <input type="number" class="form-control precio-input" name="precioDeVenta" readonly>
@@ -71,7 +77,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const agregarFilaBtn = newRow.querySelector('.agregar-fila-btn');
         agregarFilaBtn.addEventListener("click", function (event) {
             event.preventDefault(); // Prevenir el comportamiento por defecto del botón
-            agregarFila(true);
+            if (agregarFilaBtn.classList.contains('btn-primary')) {
+                agregarFila(true);
+            } else {
+                eliminarFila(newRow);
+            }
         });
     }
 
@@ -85,6 +95,17 @@ document.addEventListener("DOMContentLoaded", function () {
         totalVentaInput.value = totalVenta.toFixed(2); // Mostrar el total con 2 decimales
     }
 
+    // Función para verificar si una fila está completa y cambiar el botón a "-"
+    function verificarFilaCompleta(row) {
+        if (filaCompleta(row)) {
+            const boton = row.querySelector('.btn-primary');
+            console.log(boton);
+            boton.textContent = '-';
+            boton.classList.remove('btn-primary');
+            boton.classList.add('btn-danger');
+        }
+    }
+
     // Función para verificar si una fila está completa
     function filaCompleta(row) {
         const codigo = row.querySelector('.codigo-input').value;
@@ -96,9 +117,23 @@ document.addEventListener("DOMContentLoaded", function () {
         return codigo && producto && cantidad && precio && total;
     }
 
-    // Función para verificar si hay al menos una fila completa
-    function hayFilaCompleta() {
-        return Array.from(formularioVenta.querySelectorAll(".row")).some(filaCompleta);
+    // Función para limpiar una fila (primaria) en lugar de eliminarla
+    function limpiarFila(row) {
+        row.querySelector('.codigo-input').value = '';
+        row.querySelector('.producto-select').value = '';
+        row.querySelector('.cantidad-input').value = '';
+        row.querySelector('.precio-input').value = '';
+        row.querySelector('.total-input').value = '';
+        actualizarTotalVenta(); // Asegurarse de que el total se actualiza
+    }
+
+    // Función para eliminar una fila
+    function eliminarFila(row) {
+        if (row === formularioVenta.querySelector('.row')) {
+            limpiarFila(row); // Limpiar la fila primaria
+        } else {
+            row.remove(); // Eliminar filas dinámicas
+        }
     }
 
     // Función para filtrar por código de barra y seleccionar el producto
@@ -119,8 +154,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!productoEncontrado) {
             alert("Producto no encontrado para el código de barra: " + barcode);
         } else {
-            if (filaCompleta(row)) {
+            // Solo agregar una nueva fila si la fila actual está completa y aún no se ha agregado una fila
+            if (filaCompleta(row) && !row.classList.contains('fila-agregada')) {
                 agregarFila(); // Agregar una nueva fila tras encontrar y completar el producto
+                row.classList.add('fila-agregada'); // Marca esta fila como completa para evitar agregar filas adicionales
             }
         }
     }
@@ -165,12 +202,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    // Manejar la selección del cliente desde el select
+    const clienteSelect = document.getElementById("rubroSelect");
+
     // Función para enviar los datos al servidor
     function enviarDatos() {
         const formData = new FormData(ventaForm);
 
         const venta = {
-            cliente: formData.get("cliente"),
+            clienteId: formData.get("cliente"), // Cambiado para obtener el cliente desde el select
             observaciones: formData.get("observaciones"),
             totalVenta: parseFloat(formData.get("totalVenta")),
             detalles: []
@@ -183,18 +223,20 @@ document.addEventListener("DOMContentLoaded", function () {
             const precioDeVenta = parseFloat(row.querySelector('.precio-input').value);
             const total = parseFloat(row.querySelector('.total-input').value);
 
-            // Agregar solo filas completas
             if (codigo && producto && cantidad && precioDeVenta && total) {
                 venta.detalles.push({
                     producto: codigo,
+                    //productoId: producto,
                     cantidad: cantidad,
-                    precioVenta: precioDeVenta,
+                    precioDeVenta: precioDeVenta,
                     total: total
                 });
             }
         });
 
-        fetch("/venta/registro", {
+        console.log("Venta:", venta);
+
+       fetch("/venta/registro", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -214,17 +256,8 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch((error) => console.error("Error en fetch:", error));
     }
 
-    ventaForm.addEventListener("submit", function (event) {
-        event.preventDefault(); // Evitar el envío por defecto del formulario
-
-        try {
-            if (hayFilaCompleta()) {
-                enviarDatos(); // Llamar a la función para enviar los datos si hay al menos una fila completa
-            } else {
-                throw new Error("Excepción: No hay productos seleccionados o escaneados.");
-            }
-        } catch (error) {
-            alert(error.message); // Mostrar el mensaje de excepción
-        }
+    ventaForm.addEventListener("submit", function (e) {
+        e.preventDefault(); // Prevenir el envío normal del formulario
+        enviarDatos(); // Llamar a la función para enviar los datos
     });
 });

@@ -2,14 +2,14 @@
 package com.egg.almacen.DTO;
 
 
-public class DetalleVentaDTO {
-
+public class DetalleIngresoDTO {
+    
     private String producto;
     private Double cantidad;
-    private Double precioVenta;
+    private Double precioCompra;
     private Double total;
 
-    public DetalleVentaDTO() {
+    public DetalleIngresoDTO() {
     }
 
     public String getProducto() {
@@ -28,12 +28,12 @@ public class DetalleVentaDTO {
         this.cantidad = cantidad;
     }
 
-    public Double getPrecioVenta() {
-        return precioVenta;
+    public Double getPrecioCompra() {
+        return precioCompra;
     }
 
-    public void setPrecioVenta(Double precioVenta) {
-        this.precioVenta = precioVenta;
+    public void setPrecioCompra(Double precioCompra) {
+        this.precioCompra = precioCompra;
     }
 
     public Double getTotal() {

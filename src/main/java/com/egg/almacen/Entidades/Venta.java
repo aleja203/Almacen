@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
@@ -27,7 +28,10 @@ public class Venta {
     @Temporal(TemporalType.DATE)
     private Date fecha;
 
-    private String cliente;
+    @ManyToOne
+    @JoinColumn(name = "cliente_dni")
+    private Cliente cliente; // Relación con la entidad Cliente
+    
     private String observaciones;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -54,11 +58,11 @@ public class Venta {
         this.fecha = fecha;
     }
 
-    public String getCliente() {
+    public Cliente getCliente() {
         return cliente;
     }
 
-    public void setCliente(String cliente) {
+    public void setCliente(Cliente cliente) {
         this.cliente = cliente;
     }
 
