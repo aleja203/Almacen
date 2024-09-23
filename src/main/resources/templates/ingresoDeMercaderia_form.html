@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Almacen</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link href="/css/venta_form.css" rel="stylesheet">
+    <link href="/css/ingresoDeMercaderia_form.css" rel="stylesheet">
 </head>
 
 <body>
@@ -27,20 +27,20 @@
     </div>
   
 <div class="container-fluid">
-        <form id="ventaForm" method="POST">
+        <form id="ingresoDeMercaderiaForm" method="POST">
 
             <div class="col-md-6">
-                <label for="clienteSelect" class="mb-2">Cliente</label>
-                <select name="cliente" id="clienteSelect" class="form-control">
-                    <option value="">Seleccionar Cliente</option>
-                    <option th:each="cliente : ${clientes}"
-                            th:value="${cliente.dni}"
-                            th:text="${cliente.nombre}">
+                <label for="proveedorSelect" class="mb-2">Proveedor</label>
+                <select name="proveedor" id="proveedorSelect" class="form-control">
+                    <option value="">Seleccionar Proveedor</option>
+                    <option th:each="proveedor : ${proveedores}"
+                            th:value="${proveedor.id}"
+                            th:text="${proveedor.nombre}">
                     </option>
                 </select>
             </div>
             <br>
-            <div id="formularioVenta">
+            <div id="formularioIngresoDeMercaderia">
                 <!-- Primera fila -->
                 <div class="row align-items-end">
                     <div class="col-md-2">
@@ -54,7 +54,7 @@
                             <option th:each="producto : ${productos}"
                                     th:value="${producto.codigo}"
                                     th:text="${producto.descripcion}"
-                                    th:data-precioVenta="${producto.precioVenta}">
+                                    th:data-costo="${producto.costo}">
                             </option>
                         </select>
                     </div>
@@ -64,8 +64,9 @@
                         <input type="number" class="form-control cantidad-input" name="cantidad" value="1" step="0.01" min="0">
                     </div>
                     <div class="col-md-2">
-                        <label for="precioVenta" class="mb-2">Precio</label>
-                        <input type="number" class="form-control precio-input" name="precioVenta" readonly>
+                        <label for="costo" class="mb-2">Costo</label>
+                        <!--<input type="number" class="form-control precio-input" name="costo">-->
+                        <input type="number" class="form-control precio-input" name="costo" step="0.01" readonly>
                     </div>
                     <!-- Columna Total -->
                     <div class="col-md-2">
@@ -85,15 +86,15 @@
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <label for="totalVenta" class="mb-2">Total de la Venta</label>
-                    <input type="number" class="form-control" id="totalVenta" name="totalVenta"readonly>
+                    <label for="totalCompra" class="mb-2">Total de la Compra</label>
+                    <input type="number" class="form-control" id="totalCompra" name="totalCompra"readonly>
                 </div>
             </div>
 
             <!-- Botón de envío -->
             <div class="row mb-3">
                 <div class="col-md-12">
-                    <button type="submit" id="submitVenta" class="btn btn-primary">Guardar</button>
+                    <button type="submit" id="submitIngresoDeMercaderia" class="btn btn-primary">Guardar</button>
                 </div>
             </div>
         </form>
@@ -109,7 +110,7 @@
 
 <footer th:replace="/fragments/footer :: footer"></footer>
 
-<script src="/venta_form.js"></script>
+<script src="/ingresoDeMercaderia_form.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -42,7 +42,8 @@ public class IngresoDeMercaderiaServicio {
             IngresoDeMercaderia ingresoDeMercaderia = new IngresoDeMercaderia();
 
             // Verificar si el clienteId no es nulo ni vacío
-            if (ingresoDeMercaderiaDTO.getProveedorId() != null) {
+            // if (ingresoDeMercaderiaDTO.getProveedorId() != null) {
+            if (ingresoDeMercaderiaDTO.getProveedorId() != null && !ingresoDeMercaderiaDTO.getProveedorId().trim().isEmpty()) {
                 // Buscar el cliente por su ID
                 Proveedor proveedor = proveedorRepositorio.findById(ingresoDeMercaderiaDTO.getProveedorId())
                         .orElseThrow(() -> new RuntimeException("Proveedor no encontrado: " + ingresoDeMercaderiaDTO.getProveedorId()));
@@ -60,13 +61,19 @@ public class IngresoDeMercaderiaServicio {
                     .map(detalleDTO -> {
                         DetalleIngreso detalle = new DetalleIngreso();
                         detalle.setCantidad(detalleDTO.getCantidad());
-                        detalle.setPrecioCompra(detalleDTO.getPrecioCompra());
+                        detalle.setCosto(detalleDTO.getCosto());
                         detalle.setTotal(detalleDTO.getTotal());
 
                         // Buscar el producto por código de barras
                         Producto producto = productoRepositorio.findByCodigo(detalleDTO.getProducto());
 
                         if (producto != null) {
+                            
+                             producto.setExistencia(producto.getExistencia() + detalleDTO.getCantidad());
+
+                        // Guardar el producto con la nueva existencia
+                        productoRepositorio.save(producto);
+                            
                             detalle.setProducto(producto);
                         } else {
                             throw new RuntimeException("Producto no encontrado: " + detalleDTO.getProducto());
@@ -83,7 +90,7 @@ public class IngresoDeMercaderiaServicio {
             ingresoDeMercaderiaRepositorio.save(ingresoDeMercaderia);
 
             // Devolver un mensaje de éxito
-            response.put("message", "Ingeso registrado exitosamente.");
+            response.put("message", "Ingreso registrado exitosamente.");
             return response;
         } catch (RuntimeException e) {
             // Captura de errores específicos (Producto no encontrado o Cliente no encontrado)

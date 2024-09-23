@@ -73,6 +73,12 @@ public class VentaServicio {
                         Producto producto = productoRepositorio.findByCodigo(detalleDTO.getProducto());
 
                         if (producto != null) {
+                            
+                         producto.setExistencia(producto.getExistencia() - detalleDTO.getCantidad());
+
+                        // Guardar el producto con la nueva existencia
+                        productoRepositorio.save(producto);   
+                            
                             detalle.setProducto(producto);
                         } else {
                             throw new RuntimeException("Producto no encontrado: " + detalleDTO.getProducto());

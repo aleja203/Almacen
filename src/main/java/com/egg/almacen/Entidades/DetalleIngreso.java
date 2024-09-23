@@ -24,7 +24,7 @@ public class DetalleIngreso {
     private Producto producto;
 
     private Double cantidad;
-    private Double precioCompra;
+    private Double costo;
     private Double total;
 
     public DetalleIngreso() {
@@ -62,12 +62,12 @@ public class DetalleIngreso {
         this.cantidad = cantidad;
     }
 
-    public Double getPrecioCompra() {
-        return precioCompra;
+    public Double getCosto() {
+        return costo;
     }
 
-    public void setPrecioCompra(Double precioCompra) {
-        this.precioCompra = precioCompra;
+    public void setCosto(Double costo) {
+        this.costo = costo;
     }
 
     public Double getTotal() {

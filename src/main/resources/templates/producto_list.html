@@ -69,6 +69,7 @@
                 <th scope="col">Subrubro</th>
                 <th scope="col">Costo</th>
                 <th scope="col">Precio de venta</th>
+                <th scope="col">Stock</th>
                 <th scope="col">Acciones</th>
                 <!--<th scope="col" sec:authorize="hasRole('ADMIN')" >Acciones</th>-->
 
@@ -81,7 +82,8 @@
                 <td th:text="${producto.rubro.nombre}" th:attr="data-rubro-id=${producto.rubro.id}"></td>
                 <td th:text="${producto.subRubro.nombre}" th:attr="data-subrubro-id=${producto.subRubro.id}"></td>
                 <td th:text="${producto.costo}"></td>
-                <td th:text="${producto.precioDeVenta}"></td>
+                <td th:text="${producto.precioVenta}"></td>
+                <td th:text="${producto.existencia}"></td>
                 
                 <td th:attr="data-codigo-barra=${producto.codigo}">
                 <a th:href="@{/producto/modificar/__${producto.codigo}__}">

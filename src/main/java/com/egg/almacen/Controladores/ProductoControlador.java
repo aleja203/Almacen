@@ -58,12 +58,12 @@ public class ProductoControlador {
                            @RequestParam(required = false) String idRubro,
                            @RequestParam(required = false) String idSubRubro,
                            @RequestParam(required = false) Double costo,
-                           @RequestParam(required = false) Double precioDeVenta,
+                           @RequestParam(required = false) Double precioVenta,
                            ModelMap modelo) {
 
         try {
 
-            productoServicio.crearProducto(codigo, descripcion, idRubro, idSubRubro, costo, precioDeVenta);
+            productoServicio.crearProducto(codigo, descripcion, idRubro, idSubRubro, costo, precioVenta);
 
             modelo.put("exito", "El producto fue cargado correctamente!");
 
@@ -113,7 +113,7 @@ public class ProductoControlador {
                             @RequestParam String idRubro,
                             @RequestParam String idSubRubro,
                             @RequestParam Double costo,
-                            @RequestParam Double precioDeVenta,
+                            @RequestParam Double precioVenta,
                             ModelMap modelo,
                             RedirectAttributes redirectAttributes) {
         try {
@@ -129,7 +129,7 @@ public class ProductoControlador {
             modelo.addAttribute("subRubros", subRubros);
             redirectAttributes.addFlashAttribute("exito", "Producto actualizado exitosamente");
             
-            productoServicio.modificarProducto(codigo, descripcion, idRubro, idSubRubro, costo, precioDeVenta);
+            productoServicio.modificarProducto(codigo, descripcion, idRubro, idSubRubro, costo, precioVenta);
             
             return "redirect:../lista";
         } catch (MiException ex) {

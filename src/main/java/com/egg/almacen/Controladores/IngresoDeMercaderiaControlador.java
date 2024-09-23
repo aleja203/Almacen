@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/IngresoDeMercaderia")
+@RequestMapping("/ingresoDeMercaderia")
 public class IngresoDeMercaderiaControlador {
     
     @Autowired
@@ -39,7 +39,7 @@ public class IngresoDeMercaderiaControlador {
         modelo.addAttribute("proveedores", proveedores);
         
                 
-        return "venta_form.html";
+        return "ingresoDeMercaderia_form.html";
     }
     
     @PostMapping("/registro")

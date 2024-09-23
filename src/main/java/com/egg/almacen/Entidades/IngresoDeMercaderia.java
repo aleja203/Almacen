@@ -32,10 +32,10 @@ public class IngresoDeMercaderia {
     
     private String observaciones;
     
-    @ManyToOne
-    private Producto producto;
+//    @ManyToOne
+//    private Producto producto;
     
-    @OneToMany(mappedBy = "IngresoDeMercaderia", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ingresoDeMercaderia", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DetalleIngreso> detalles;
     
     private Double totalCompra;      
@@ -75,13 +75,13 @@ public class IngresoDeMercaderia {
         this.observaciones = observaciones;
     }
 
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
+//    public Producto getProducto() {
+//        return producto;
+//    }
+//
+//    public void setProducto(Producto producto) {
+//        this.producto = producto;
+//    }
 
     public Set<DetalleIngreso> getDetalles() {
         return detalles;

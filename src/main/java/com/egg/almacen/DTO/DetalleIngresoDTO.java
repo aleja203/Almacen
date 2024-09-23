@@ -6,7 +6,7 @@ public class DetalleIngresoDTO {
     
     private String producto;
     private Double cantidad;
-    private Double precioCompra;
+    private Double costo;
     private Double total;
 
     public DetalleIngresoDTO() {
@@ -28,12 +28,12 @@ public class DetalleIngresoDTO {
         this.cantidad = cantidad;
     }
 
-    public Double getPrecioCompra() {
-        return precioCompra;
+    public Double getCosto() {
+        return costo;
     }
 
-    public void setPrecioCompra(Double precioCompra) {
-        this.precioCompra = precioCompra;
+    public void setCosto(Double costo) {
+        this.costo = costo;
     }
 
     public Double getTotal() {

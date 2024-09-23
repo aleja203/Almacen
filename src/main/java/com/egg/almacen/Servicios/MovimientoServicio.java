@@ -37,9 +37,9 @@ public class MovimientoServicio {
         movimientoRepositorio.save(movimiento);
         
         if (tipo.equals("VENTA")) {
-            producto.setStock(producto.getStock() - cantidad);
+            producto.setExistencia(producto.getExistencia() - cantidad);
         } else if (tipo.equals("INGRESO")) {
-            producto.setStock(producto.getStock() + cantidad);
+            producto.setExistencia(producto.getExistencia() + cantidad);
         }
         productoRepositorio.save(producto);
     }
@@ -59,9 +59,9 @@ public class MovimientoServicio {
         movimientoRepositorio.save(movimiento);
         
         if (tipo.equals("VENTA")) {
-            producto.setStock(producto.getStock() - cantidad);
+            producto.setExistencia(producto.getExistencia() - cantidad);
         } else if (tipo.equals("INGRESO")) {
-            producto.setStock(producto.getStock() + cantidad);
+            producto.setExistencia(producto.getExistencia() + cantidad);
         }
         productoRepositorio.save(producto);
     }

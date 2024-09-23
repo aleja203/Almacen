@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const ventaForm = document.getElementById("ventaForm");
-    const formularioVenta = document.getElementById("formularioVenta");
-    const totalVentaInput = document.getElementById("totalVenta");
+    const ingresoDeMercaderiaForm = document.getElementById("ingresoDeMercaderiaForm");
+    const formularioIngresoDeMercaderia = document.getElementById("formularioIngresoDeMercaderia");
+    const totalCompraInput = document.getElementById("totalCompra");
     let barcodeInput = "";
     let barcodeTimer;
 
@@ -16,15 +16,15 @@ document.addEventListener("DOMContentLoaded", function () {
         const resultado = cantidad * precio;
 
         totalInput.value = resultado.toFixed(2); // Mostrar con 2 decimales
-        actualizarTotalVenta(); // Actualizar el total general de la venta
+        actualizarTotalCompra(); // Actualizar el total general de la compra
     }
 
     // Función para actualizar el precio según el producto seleccionado
     function actualizarPrecio(row) {
         const productoSelect = row.querySelector('.producto-select');
         const productoSeleccionado = productoSelect.options[productoSelect.selectedIndex];
-        const precioVenta = productoSeleccionado.getAttribute('data-precioVenta');
-        row.querySelector('.precio-input').value = precioVenta ? parseFloat(precioVenta).toFixed(2) : '';
+        const costo = productoSeleccionado.getAttribute('data-costo');
+        row.querySelector('.precio-input').value = costo ? parseFloat(costo).toFixed(2) : '';
         const codigoProducto = productoSeleccionado.value;
         row.querySelector('.codigo-input').value = codigoProducto;
         actualizarTotal(row);
@@ -47,14 +47,14 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             <div class="col-md-3">
                 <select class="form-control producto-select" name="producto">
-                    ${formularioVenta.querySelector('.producto-select').innerHTML}
+                    ${formularioIngresoDeMercaderia.querySelector('.producto-select').innerHTML}
                 </select>
             </div>
             <div class="col-md-2">
                 <input type="number" class="form-control cantidad-input" name="cantidad" value="1" step="0.01" min="0">
             </div>
             <div class="col-md-2">
-                <input type="number" class="form-control precio-input" name="precioVenta">
+                <input type="number" class="form-control precio-input" name="costo">
             </div>
             <div class="col-md-2">
                 <input type="number" class="form-control total-input" name="total" readonly>
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `;
 
-        formularioVenta.appendChild(newRow);
+        formularioIngresoDeMercaderia.appendChild(newRow);
         const productoSelect = newRow.querySelector('.producto-select');
         productoSelect.addEventListener("change", function () {
             actualizarPrecio(newRow);
@@ -86,13 +86,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    function actualizarTotalVenta() {
-        let totalVenta = 0;
+    function actualizarTotalCompra() {
+        let totalCompra = 0;
         const totalInputs = document.querySelectorAll('.total-input');
         totalInputs.forEach(function (input) {
-            totalVenta += parseFloat(input.value) || 0;
+            totalCompra += parseFloat(input.value) || 0;
         });
-        totalVentaInput.value = totalVenta.toFixed(2); // Mostrar el total con 2 decimales
+        totalCompraInput.value = totalCompra.toFixed(2); // Mostrar el total con 2 decimales
     }
 
     // Función para verificar si una fila está completa y cambiar el botón a "-"
@@ -124,12 +124,12 @@ document.addEventListener("DOMContentLoaded", function () {
         row.querySelector('.cantidad-input').value = '';
         row.querySelector('.precio-input').value = '';
         row.querySelector('.total-input').value = '';
-        actualizarTotalVenta(); // Asegurarse de que el total se actualiza
+        actualizarTotalCompra(); // Asegurarse de que el total se actualiza
     }
 
     // Función para eliminar una fila
     function eliminarFila(row) {
-        if (row === formularioVenta.querySelector('.row')) {
+        if (row === formularioIngresoDeMercaderia.querySelector('.row')) {
             limpiarFila(row); // Limpiar la fila primaria
         } else {
             row.remove(); // Eliminar filas dinámicas
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             e.preventDefault(); // Evitar que la tecla Enter provoque el envío del formulario
 
-            const currentRow = formularioVenta.lastElementChild;
+            const currentRow = formularioIngresoDeMercaderia.lastElementChild;
             filtrarPorCodigoDeBarra(barcodeInput, currentRow);
             barcodeInput = "";
 
@@ -183,12 +183,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 200); // Limpiar el input después de un breve tiempo de inactividad
     });
 
-    const agregarFilaBtn = ventaForm.querySelector('#agregarFila');
+    const agregarFilaBtn = ingresoDeMercaderiaForm.querySelector('#agregarFila');
     agregarFilaBtn.addEventListener("click", function () {
         agregarFila(true);
     });
 
-    const firstRow = formularioVenta.querySelector('.row');
+    const firstRow = formularioIngresoDeMercaderia.querySelector('.row');
     const productoSelect = firstRow.querySelector('.producto-select');
     productoSelect.addEventListener("change", function () {
         actualizarPrecio(firstRow);
@@ -207,60 +207,66 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Función para enviar los datos al servidor
     function enviarDatos() {
-        const formData = new FormData(ventaForm);
+        const formData = new FormData(ingresoDeMercaderiaForm);
 
-        const venta = {
-            clienteId: formData.get("cliente"),
+        const compra = {
+            proveedorId: formData.get("proveedor"),
             observaciones: formData.get("observaciones"),
-            totalVenta: parseFloat(formData.get("totalVenta")),
+            totalCompra: parseFloat(formData.get("totalCompra")),
             detalles: []
         };
 
-        formularioVenta.querySelectorAll(".row").forEach(row => {
+        formularioIngresoDeMercaderia.querySelectorAll(".row").forEach(row => {
             const codigo = row.querySelector('.codigo-input').value;
             const producto = row.querySelector('.producto-select').value;
             const cantidad = parseFloat(row.querySelector('.cantidad-input').value);
-            const precioVenta = parseFloat(row.querySelector('.precio-input').value);
+            const costo = parseFloat(row.querySelector('.precio-input').value);
             const total = parseFloat(row.querySelector('.total-input').value);
 
-            if (codigo && producto && cantidad && precioVenta && total) {
-                venta.detalles.push({
+            if (codigo && producto && cantidad && costo && total) {
+                compra.detalles.push({
                     producto: codigo,
                     //productoId: producto,
                     cantidad: cantidad,
-                    precioVenta: precioVenta,
+                    costo: costo,
                     total: total
                 });
             }
         });
 
-        console.log("Venta:", venta);
+        console.log("Compra:", compra);
 
-       fetch("/venta/registro", {
+       fetch("/ingresoDeMercaderia/registro", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(venta)
+            body: JSON.stringify(compra)
         })
         .then(response => response.json())
         .then(data => {
             if (data.message) {
                 alert(data.message);
-                window.location.href = "/venta/registrar";
+                window.location.href = "/ingresoDeMercaderia/registrar";
             } else if (data.error) {
                 alert(data.error);
-                window.location.href = "/venta/registrar";
+                window.location.href = "/ingresoDeMercaderia/registrar";
             }
         })
         .catch((error) => console.error("Error en fetch:", error));
     }
 
-    ventaForm.addEventListener("submit", function (e) {
+    ingresoDeMercaderiaForm.addEventListener("submit", function (e) {
         e.preventDefault(); // Prevenir el envío normal del formulario
         enviarDatos(); // Llamar a la función para enviar los datos
     });
     
-    
+    function actualizarCosto(row, costo) {
+    // Redondea el costo a su valor entero (sin decimales)
+    const costoRedondeado = Math.round(costo);
+
+    // Asigna el valor redondeado al input del costo
+    row.querySelector('.precio-input').value = costoRedondeado;
+}
 
 });

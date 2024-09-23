@@ -1,0 +1,113 @@
+.footer {
+        background-color: #f2f2f2;
+        padding: 20px;
+        text-align: center;
+      }
+      .footer-logo {
+        width: 100px;
+      }
+      .footer-links a {
+        color: #666;
+        text-decoration: none;
+        margin: 0 10px;
+      }
+
+.formulario{
+    width: 50%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between; /* Espaciado entre las columnas */
+    align-items: center; /* Alinea las etiquetas y los inputs verticalmente */
+}
+
+.col-md-4 {
+    flex: 1;
+    max-width: 32%; /* Ajusta el ancho para que las tres columnas ocupen espacio en una fila */
+    margin-right: 1%; /* Añade un pequeño margen entre columnas */
+}
+
+.col-md-4:last-child {
+    margin-right: 0; /* Elimina el margen derecho del último elemento */
+}
+
+.form-control {
+    width: 100%; /* Asegura que el select y los inputs ocupen todo el ancho de la columna */
+    max-width: none; /* Quita el max-width para que no limite el tamaño */
+}
+
+#formularioIngresoDeMercaderia .row button {
+    margin-top: 0 !important;
+}
+
+#formularioIngresoDeMercaderia .row .col-md-1 button {
+    margin-top: 0 !important;
+    width: 100%; /* Ajusta el tamaño del botón para que coincida con las demás columnas */
+    height: calc(2.5rem + 2px); /* Asegura que la altura del botón coincida con la de los inputs */
+    font-size: 1.5rem; /* Ajusta el tamaño del texto dentro del botón */
+}
+
+
+.agregar-fila-btn {
+    height: 100%;
+    padding: 0;
+    font-size: 20px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+/* Asegúrate de que el botón ocupe toda la altura de la columna y esté centrado */
+.btn-icon {
+    width: 100%; /* Ocupa todo el ancho disponible de la columna */
+    height: 100%; /* Ocupa toda la altura de la columna */
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    padding: 0; /* Elimina el padding para ajustarse a la altura de la columna */
+    font-size: 1.5rem; /* Ajusta el tamaño del signo "+" */
+    line-height: 1; /* Ajusta la altura de línea para centrar el signo "+" */
+    border: 1px solid #007bff; /* Agrega un borde para que el botón se vea bien alineado */
+    border-radius: .25rem; /* Ajusta los bordes redondeados si es necesario */
+}
+
+#formularioIngresoDeMercaderia .row {
+    margin-bottom: 1rem; /* Espacio entre filas si es necesario */
+}
+
+#dformularioIngresoDeMercaderia .row .form-control {
+    height: calc(2.5rem + 2px); /* Ajusta la altura de los inputs para que coincida con la del botón */
+}
+
+#formularioIngresoDeMercaderia .row .col-md-1 {
+    padding-right: 0; /* Elimina el padding derecho para alinear mejor el botón */
+}
+
+#formularioIngresoDeMercaderia .row .col-md-1 .btn-icon {
+    height: calc(2.5rem + 2px); /* Ajusta la altura del botón para que coincida con los inputs */
+    font-size: 1.5rem; /* Asegura que el tamaño del signo "+" sea apropiado */
+}
+.total-input {
+    pointer-events: none;
+    background-color: #e9ecef; /* Estilo como un campo deshabilitado */
+}
+/* Estilo para el botón "+" */
+.btn-primary {
+    background-color: #007bff; /* Color de fondo celeste */
+    border-color: #007bff; /* Borde celeste */
+    color: #fff; /* Color del texto blanco */
+}
+
+/* Estilo para el botón "-" */
+.btn-danger {
+    background-color: #dc3545; /* Color de fondo rojo */
+    border-color: #dc3545; /* Borde rojo */
+    color: #fff; /* Color del texto blanco */
+}

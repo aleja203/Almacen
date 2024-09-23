@@ -29,7 +29,7 @@ public class Venta {
     private Date fecha;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_dni")
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente; // Relación con la entidad Cliente
     
     private String observaciones;

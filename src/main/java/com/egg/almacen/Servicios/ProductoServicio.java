@@ -30,7 +30,7 @@ public class ProductoServicio {
     
         
     @Transactional
-    public void crearProducto(String codigo,  String descripcion, String idRubro, String idSubRubro, Double costo, Double precioDeVenta) throws MiException{
+    public void crearProducto(String codigo,  String descripcion, String idRubro, String idSubRubro, Double costo, Double precioVenta) throws MiException{
         
         
         validar(codigo, descripcion, idRubro, idSubRubro);
@@ -48,7 +48,7 @@ public class ProductoServicio {
         producto.setRubro(rubro);
         producto.setSubRubro(subRubro);
         producto.setCosto(costo);
-        producto.setPrecioDeVenta(precioDeVenta);
+        producto.setPrecioVenta(precioVenta);
         
         productoRepositorio.save(producto);
         
@@ -64,7 +64,7 @@ public class ProductoServicio {
     }
     
     @Transactional
-    public void modificarProducto(String codigo, String descripcion, String idRubro, String idSubRubro, Double costo, Double precioDeVenta)throws MiException{
+    public void modificarProducto(String codigo, String descripcion, String idRubro, String idSubRubro, Double costo, Double precioVenta)throws MiException{
         
         validar(codigo, descripcion, idRubro, idSubRubro);
         
@@ -91,7 +91,7 @@ public class ProductoServicio {
             
             producto.setCosto(costo);
             
-            producto.setPrecioDeVenta(precioDeVenta);
+            producto.setPrecioVenta(precioVenta);
             
             producto.setRubro(Rubro);
             

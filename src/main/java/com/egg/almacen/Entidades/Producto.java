@@ -19,14 +19,14 @@ public class Producto {
     private Rubro rubro;
     @ManyToOne
     private SubRubro subRubro;
-    private Integer stock;
+    private Double existencia;
     private Double costo;
-    private Double precioDeVenta;
+    private Double precioVenta;
     @Temporal(TemporalType.DATE)
     private Date alta;
 
     public Producto() {
-        this.stock = 0;
+        this.existencia = 0.0;
     }
 
     public String getCodigo() {
@@ -61,12 +61,12 @@ public class Producto {
         this.subRubro = subRubro;
     }
 
-    public Integer getStock() {
-        return stock;
+    public Double getExistencia() {
+        return existencia;
     }
 
-    public void setStock(Integer stock) {
-        this.stock = stock;
+    public void setExistencia(Double existencia) {
+        this.existencia = existencia;
     }
 
     public Double getCosto() {
@@ -77,12 +77,12 @@ public class Producto {
         this.costo = costo;
     }
 
-    public Double getPrecioDeVenta() {
-        return precioDeVenta;
+    public Double getPrecioVenta() {
+        return precioVenta;
     }
 
-    public void setPrecioDeVenta(Double precioDeVenta) {
-        this.precioDeVenta = precioDeVenta;
+    public void setPrecioVenta(Double precioVenta) {
+        this.precioVenta = precioVenta;
     }
 
     public Date getAlta() {
