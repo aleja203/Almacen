@@ -16,6 +16,7 @@ import com.egg.almacen.Repositorios.VentaRepositorio;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -108,5 +109,72 @@ public class VentaServicio {
         }
     }
 
+    public List<Map<String, Object>> listarDetalle() {
+    List<Venta> ventas = ventaRepositorio.listarConDetalles();
+    List<Map<String, Object>> resultado = new ArrayList<>();
+
+    Set<Long> ventasProcesadas = new HashSet<>(); // Set para almacenar los IDs de ventas ya procesadas
+
+    for (Venta venta : ventas) {
+        // Si el ID de la venta ya fue procesado, no volvemos a agregarla
+        if (ventasProcesadas.contains(venta.getId())) {
+            continue;  // Pasamos a la siguiente venta
+        }
+
+        for (DetalleVenta detalle : venta.getDetalles()) {
+            Map<String, Object> datosVenta = new HashMap<>();
+            datosVenta.put("id", venta.getId());
+            datosVenta.put("fecha", venta.getFecha());
+            datosVenta.put("cliente", venta.getCliente().getNombre());  // Mostramos el cliente en cada fila
+            datosVenta.put("producto", detalle.getProducto().getDescripcion());  // Mostramos cada producto en una fila
+            datosVenta.put("cantidad", detalle.getCantidad());  // Cantidad por producto
+            datosVenta.put("precioVenta", detalle.getPrecioVenta());  // Precio por producto
+            datosVenta.put("total", detalle.getTotal());  // Total por producto
+            resultado.add(datosVenta);
+        }
+
+        // Agregamos el ID de la venta a la lista de ventas procesadas
+        ventasProcesadas.add(venta.getId());
+    }
+
+    // Retornamos la lista de resultados procesados
+    return resultado;
+}
+
+    @Transactional
+    public Map<String, Object> eliminar(String ventaId) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            // Buscar la venta por ID
+            Venta venta = ventaRepositorio.findById(ventaId)
+                    .orElseThrow(() -> new RuntimeException("Venta no encontrada: " + ventaId));
+
+            // Eliminar la venta (esto eliminará automáticamente los detalles relacionados)
+            ventaRepositorio.delete(venta);
+
+            // Responder con éxito
+            response.put("message", "Venta eliminada exitosamente.");
+            return response;
+        } catch (RuntimeException e) {
+            // Capturar errores específicos (venta no encontrada)
+            response.put("error", "Error al eliminar la venta: " + e.getMessage());
+            return response;
+        } catch (Exception e) {
+            // Capturar errores generales
+            response.put("error", "Error inesperado al eliminar la venta.");
+            return response;
+        }
+    }
+
+    public List<Venta> listarVenta() {
+    List<Venta> ventas =  new ArrayList();
+       
+       ventas = ventaRepositorio.findAll();
+       
+       return ventas; 
+}
     
 }
+
+    

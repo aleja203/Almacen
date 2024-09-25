@@ -55,25 +55,37 @@ public class VentaControlador {
     @PostMapping("/registro")
     //@Transactional
     public ResponseEntity<Map<String, Object>> registrarVenta(@RequestBody VentaDTO ventaDTO) {
-        // Llamamos al servicio que ahora maneja tanto la creación de la venta como las excepciones
-        System.out.println("Contenido del JSON: " + ventaDTO);
 
-        System.out.println("Cliente: " + ventaDTO.getClienteId());
-        
-        
-        
-        
-        
         Map<String, Object> response = ventaServicio.crearVenta(ventaDTO);
 
-        // Si el servicio devolvió un mensaje de error, lo respondemos con HTTP 500
         if (response.containsKey("error")) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
-        // Si todo fue exitoso, devolvemos una respuesta con HTTP 200
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/listaDetalle")
+    public String listarVentasDetalle(Model model) {
+        List<Map<String, Object>> ventas = ventaServicio.listarDetalle();
+        List<Producto> productos = productoServicio.listarProductos();
+        List<Cliente> clientes = clienteServicio.listarClientes();
+
+        model.addAttribute("ventas", ventas);
+        model.addAttribute("productos", productos);
+        model.addAttribute("clientes", clientes);
+
+        return "ventaDetalle_list";
+    }
     
+        @GetMapping("/listaVenta")
+    public String listarVentas(Model model) {
+        List<Venta> ventas = ventaServicio.listarVenta();
+
+        List<Cliente> clientes = clienteServicio.listarClientes();
+
+        model.addAttribute("ventas", ventas);
+        model.addAttribute("clientes", clientes);
+        return "venta_list";
+    }
 }
