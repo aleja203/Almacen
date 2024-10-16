@@ -1,6 +1,7 @@
 
 package com.egg.almacen.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -17,15 +18,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 public class Venta {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Temporal(TemporalType.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date fecha;
 
     @ManyToOne

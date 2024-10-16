@@ -24,9 +24,11 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 @Controller
@@ -55,25 +57,49 @@ public class VentaControlador {
     @PostMapping("/registro")
     //@Transactional
     public ResponseEntity<Map<String, Object>> registrarVenta(@RequestBody VentaDTO ventaDTO) {
-        // Llamamos al servicio que ahora maneja tanto la creación de la venta como las excepciones
-        System.out.println("Contenido del JSON: " + ventaDTO);
 
-        System.out.println("Cliente: " + ventaDTO.getClienteId());
-        
-        
-        
-        
-        
         Map<String, Object> response = ventaServicio.crearVenta(ventaDTO);
 
-        // Si el servicio devolvió un mensaje de error, lo respondemos con HTTP 500
         if (response.containsKey("error")) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
 
-        // Si todo fue exitoso, devolvemos una respuesta con HTTP 200
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/listaDetalle")
+    public String listarVentasDetalle(Model model) {
+        List<Map<String, Object>> ventas = ventaServicio.listarDetalle();
+        List<Producto> productos = productoServicio.listarProductos();
+        List<Cliente> clientes = clienteServicio.listarClientes();
+
+        model.addAttribute("ventas", ventas);
+        model.addAttribute("productos", productos);
+        model.addAttribute("clientes", clientes);
+
+        return "ventaDetalle_list";
+    }
     
+    @GetMapping("/listaVenta")
+    public String listarVentas(Model model) {
+        List<Venta> ventas = ventaServicio.listarVenta();
+
+        List<Cliente> clientes = clienteServicio.listarClientes();
+
+        model.addAttribute("ventas", ventas);
+        model.addAttribute("clientes", clientes);
+        return "venta_list";
+    }
+    
+     @GetMapping("/eliminar/{id}")
+    public String eliminarVenta(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            ventaServicio.eliminarVenta(id);
+            redirectAttributes.addFlashAttribute("exito", "La venta ha sido eliminada exitosamente.");
+        } catch (MiException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+
+        return "redirect:/venta/listaVenta";
+    }
 }

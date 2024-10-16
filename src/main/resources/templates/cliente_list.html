@@ -20,29 +20,31 @@
         </div>
     </div>
 
-    <table class="table table-dark">
-                <thead>
-                    <tr>
-                        <th scope="col">DNI</th>
-                        <th scope="col">Nombre del Cliente</th>
-                        <th scope="col">Acciones</th>
-                        <!--<th scope="col" sec:authorize="hasRole('ADMIN')" >Acciones</th>-->
+    <div class="table-container">
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">DNI</th>
+                    <th scope="col">Nombre del Cliente</th>
+                    <th scope="col">Acciones</th>
+                    <!--<th scope="col" sec:authorize="hasRole('ADMIN')" >Acciones</th>-->
 
-                    </tr>
-                </thead>
-                <tbody th:each="cliente : ${clientes}"> 
-                    <tr>
-                        <th scope="row" th:text="${cliente.dni}"></th>
-                        <td th:text="${cliente.nombre}"></td>
-                        <td>
-                            <a th:href= "@{/cliente/modificar/__${cliente.dni}__}"><i class="fas fa-feather-alt"></i> Modificar/Eliminar </a>
-                            <!--<a sec:authorize="hasRole('ADMIN')" th:href= "@{/autor/modificar/__${autor.id}__}"><i class="fas fa-feather-alt"></i> Modificar/Eliminar </a>-->
-                        </td>
+                </tr>
+            </thead>
+            <tbody th:each="cliente : ${clientes}"> 
+                <tr>
+                    <th scope="row" th:text="${cliente.dni}"></th>
+                    <td th:text="${cliente.nombre}"></td>
+                    <td>
+                        <a th:href= "@{/cliente/modificar/__${cliente.dni}__}"><i class="fas fa-feather-alt"></i> Modificar/Eliminar </a>
+                        <!--<a sec:authorize="hasRole('ADMIN')" th:href= "@{/autor/modificar/__${autor.id}__}"><i class="fas fa-feather-alt"></i> Modificar/Eliminar </a>-->
+                    </td>
 
-                    </tr>
+                </tr>
 
-                </tbody>
-            </table>
+            </tbody>
+        </table>
+    </div>
 
         <section class=" text-center container">
             <div class="row mt-3">

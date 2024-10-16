@@ -21,8 +21,8 @@
     </div>
 
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6">
+        <div class="row justify-content-center mb-3">
+            <div class="col-md-2">
                 <label for="productoSelect">Producto:</label>
                 <select id="productoSelect" class="form-control">
                     <option value="">Seleccionar Producto</option>
@@ -32,7 +32,7 @@
                     </option>
                 </select>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-2">
                 <label for="rubroSelect">Rubro:</label>
                 <select id="rubroSelect" class="form-control">
                     <option value="">Seleccionar Rubro</option>
@@ -43,7 +43,7 @@
                 </select>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-2">
                 <label for="subRubroSelect">Subrubro:</label>
                 <select id="subRubroSelect" class="form-control">
                     <option value="">Seleccionar Subrubro</option>
@@ -55,46 +55,49 @@
                 </select>
             </div>
         </div>
-<a th:href="@{/producto/lista}" class="btn btn-secondary mt-2">Reiniciar filtros</a>
+        <div class="row justify-content-center mb-3">
+            <div class="col-auto">
+                <a th:href="@{/venta/listaVenta}" class="btn btn-secondary btn-sm">Reiniciar filtros</a>
+            </div>
+        </div>
 
-    <br>
-    <br>
-    
-    <table class="table table-dark">
-        <thead>
-            <tr>
-                <th scope="col">Código</th>
-                <th scope="col">Producto</th>
-                <th scope="col">Rubro</th>
-                <th scope="col">Subrubro</th>
-                <th scope="col">Costo</th>
-                <th scope="col">Precio de venta</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Acciones</th>
-                <!--<th scope="col" sec:authorize="hasRole('ADMIN')" >Acciones</th>-->
+        <!--<br>-->
 
-            </tr>
-        </thead>
-        <tbody id="productoTableBody">
-            <tr th:each="producto : ${productos}">
-                <th scope="row" th:text="${producto.codigo}"></th>
-                <td th:text="${producto.descripcion}" th:attr="data-producto-id=${producto.codigo}"></td>
-                <td th:text="${producto.rubro.nombre}" th:attr="data-rubro-id=${producto.rubro.id}"></td>
-                <td th:text="${producto.subRubro.nombre}" th:attr="data-subrubro-id=${producto.subRubro.id}"></td>
-                <td th:text="${producto.costo}"></td>
-                <td th:text="${producto.precioVenta}"></td>
-                <td th:text="${producto.existencia}"></td>
-                
-                <td th:attr="data-codigo-barra=${producto.codigo}">
-                <a th:href="@{/producto/modificar/__${producto.codigo}__}">
-                    <i class="fas fa-feather-alt"></i> Modificar/Eliminar
-                </a>
-            </td>
-            </tr>
-        </tbody>
+        <div class="table-container">
+            <table class="table table-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">Código</th>
+                        <th scope="col">Producto</th>
+                        <th scope="col">Rubro</th>
+                        <th scope="col">Subrubro</th>
+                        <th scope="col">Costo</th>
+                        <th scope="col">Precio de venta</th>
+                        <th scope="col">Stock</th>
+                        <th scope="col">Acciones</th>
+                        <!--<th scope="col" sec:authorize="hasRole('ADMIN')" >Acciones</th>-->
 
+                    </tr>
+                </thead>
+                <tbody id="productoTableBody">
+                    <tr th:each="producto : ${productos}">
+                        <th scope="row" th:text="${producto.codigo}"></th>
+                        <td th:text="${producto.descripcion}" th:attr="data-producto-id=${producto.codigo}"></td>
+                        <td th:text="${producto.rubro.nombre}" th:attr="data-rubro-id=${producto.rubro.id}"></td>
+                        <td th:text="${producto.subRubro.nombre}" th:attr="data-subrubro-id=${producto.subRubro.id}"></td>
+                        <td th:text="${producto.costo}"></td>
+                        <td th:text="${producto.precioVenta}"></td>
+                        <td th:text="${producto.existencia}"></td>
 
-    </table>
+                        <td th:attr="data-codigo-barra=${producto.codigo}">
+                            <a th:href="@{/producto/modificar/__${producto.codigo}__}">
+                                <i class="fas fa-feather-alt"></i> Modificar/Eliminar
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="/fragments/head :: head"></head>
+
+<body>
+
+    <nav th:replace="/fragments/navbar :: nav"></nav>
+
+    <div th:if="${error != null}" class="card text-white bg-danger mb-3 mensajeError">
+        <div class="card-body">
+            <h5 class="card-title">Error 👎</h5>
+            <p class="card-text" th:text="${error}"></p>
+        </div>
+    </div>
+    <div th:if="${exito != null}" class="card text-white bg-success mb-3 mt-3 mensajeExito">
+        <div class="card-body">
+            <h5 class="card-title">Exito!</h5>
+            <p class="card-text" th:text="${exito}"></p>
+        </div>
+    </div>
+
+<div class="container-fluid">
+    <!-- Fila para los filtros -->
+    <div class="row justify-content-center mb-3">
+        <!-- Producto -->
+        <div class="col-md-2">
+            <label for="productoSelect">Producto:</label>
+            <select id="productoSelect" class="form-control">
+                <option value="">Seleccionar Producto</option>
+                <option th:each="producto : ${productos}" th:value="${producto.codigo}" th:text="${producto.descripcion}">
+                </option>
+            </select>
+        </div>
+        <!-- Cliente -->
+        <div class="col-md-2">
+            <label for="clienteSelect">Cliente:</label>
+            <select id="clienteSelect" class="form-control">
+                <option value="">Seleccionar Cliente</option>
+                <option th:each="cliente : ${clientes}" th:value="${cliente.dni}" th:text="${cliente.nombre}">
+                </option>
+            </select>
+        </div>
+        <!-- Fecha Desde -->
+        <div class="col-md-2">
+            <label for="fechaDesde">Fecha Desde:</label>
+            <input type="text" id="fechaDesde" class="form-control" placeholder="dd/mm/aaaa" onfocus="(this.type='date')" required>
+        </div>
+        <!-- Fecha Hasta -->
+        <div class="col-md-2">
+            <label for="fechaHasta">Fecha Hasta:</label>
+            <input type="text" id="fechaHasta" class="form-control" placeholder="dd/mm/aaaa" onfocus="(this.type='date')" required>
+        </div>
+    </div>
+
+    <!-- Botón de reiniciar filtros -->
+<!--    <div class="row justify-content-center mb-3">
+        <a th:href="@{/venta/listaDetalle}" class="btn btn-secondary">Reiniciar filtros</a>
+    </div>-->
+    <div class="row justify-content-center mb-3">
+    <div class="col-auto">
+        <a th:href="@{/venta/listaDetalle}" class="btn btn-secondary btn-sm">Reiniciar filtros</a>
+    </div>
+</div>
+
+    <!-- Tabla -->
+    <div class="table-container">
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Cliente</th>
+                    <th scope="col">Factura</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="venta : ${ventas}" th:attr="data-dni=${venta.dniCliente}, data-producto=${venta.productoCodigo}">
+                    <td th:text="${#dates.format(venta.fecha, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${venta['cliente']}"></td>
+                    <td th:text="${venta['id']}"></td>
+                    <td th:text="${venta['producto']}"></td>
+                    <td th:text="${venta['cantidad']}"></td>
+                    <td th:text="${venta['precioVenta']}"></td>
+                    <td th:text="${venta['total']}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+    <section class="text-center container">
+        <div class="row mt-3">
+            <div class="divVolver">
+                <a th:href="@{/}" class="btn btn-secondary my-2 botonVolver botones">Volver</a>
+            </div>
+        </div>
+    </section>
+
+    <footer th:replace="/fragments/footer :: footer"></footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <script src="/ventaDetalle_list.js"></script>
+</body>
+
+</html>

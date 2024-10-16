@@ -85,7 +85,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-
     function actualizarTotalVenta() {
         let totalVenta = 0;
         const totalInputs = document.querySelectorAll('.total-input');
@@ -202,15 +201,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Manejar la selección del cliente desde el select
-    //const clienteSelect = document.getElementById("rubroSelect");
-
     // Función para enviar los datos al servidor
     function enviarDatos() {
         const formData = new FormData(ventaForm);
 
         const venta = {
-            clienteId: formData.get("cliente"),
+            id: parseInt(formData.get("ventaId"), 10),  // Convertir el ID de String a Long
+            clienteId: parseInt(formData.get("cliente"), 10), // Convertir clienteId a Long
             observaciones: formData.get("observaciones"),
             totalVenta: parseFloat(formData.get("totalVenta")),
             detalles: []
@@ -226,7 +223,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (codigo && producto && cantidad && precioVenta && total) {
                 venta.detalles.push({
                     producto: codigo,
-                    //productoId: producto,
                     cantidad: cantidad,
                     precioVenta: precioVenta,
                     total: total
@@ -236,7 +232,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         console.log("Venta:", venta);
 
-       fetch("/venta/registro", {
+        fetch("/venta/registro", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -256,11 +252,8 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch((error) => console.error("Error en fetch:", error));
     }
 
-    ventaForm.addEventListener("submit", function (e) {
-        e.preventDefault(); // Prevenir el envío normal del formulario
+    ventaForm.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevenir el envío por defecto del formulario
         enviarDatos(); // Llamar a la función para enviar los datos
     });
-    
-    
-
 });
