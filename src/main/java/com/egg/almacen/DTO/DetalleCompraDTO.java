@@ -2,14 +2,14 @@
 package com.egg.almacen.DTO;
 
 
-public class DetalleIngresoDTO {
+public class DetalleCompraDTO {
     
     private String producto;
     private Double cantidad;
     private Double costo;
     private Double total;
 
-    public DetalleIngresoDTO() {
+    public DetalleCompraDTO() {
     }
 
     public String getProducto() {

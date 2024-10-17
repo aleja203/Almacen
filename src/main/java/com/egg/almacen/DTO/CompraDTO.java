@@ -4,14 +4,14 @@ package com.egg.almacen.DTO;
 import java.util.Set;
 
 
-public class IngresoDeMercaderiaDTO {
+public class CompraDTO {
     
     private String proveedorId;
     private String observaciones;
     private double totalCompra;
-    private Set<DetalleIngresoDTO> detalles;
+    private Set<DetalleCompraDTO> detalles;
 
-    public IngresoDeMercaderiaDTO() {
+    public CompraDTO() {
     }
 
     public String getProveedorId() {
@@ -38,18 +38,18 @@ public class IngresoDeMercaderiaDTO {
         this.totalCompra = totalCompra;
     }
 
-    public Set<DetalleIngresoDTO> getDetalles() {
+    public Set<DetalleCompraDTO> getDetalles() {
         return detalles;
     }
 
-    public void setDetalles(Set<DetalleIngresoDTO> detalles) {
+    public void setDetalles(Set<DetalleCompraDTO> detalles) {
         this.detalles = detalles;
     }
 
     
     @Override
 public String toString() {
-    return "IngresoDeMercaderiaDTO{" +
+    return "CompraDTO{" +
             "proveedor=" + proveedorId +
             ", observaciones='" + observaciones + '\'' +
             ", totalCompra=" + totalCompra +

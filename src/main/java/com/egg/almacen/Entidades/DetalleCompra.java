@@ -9,15 +9,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class DetalleIngreso {
+public class DetalleCompra {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "ingresoDeMercaderia_id")
-    private IngresoDeMercaderia ingresoDeMercaderia;
+    @JoinColumn(name = "compra_id")
+    private Compra compra;
 
     @ManyToOne
     @JoinColumn(name = "producto_id")
@@ -27,7 +27,7 @@ public class DetalleIngreso {
     private Double costo;
     private Double total;
 
-    public DetalleIngreso() {
+    public DetalleCompra() {
     }
 
     public Long getId() {
@@ -38,12 +38,12 @@ public class DetalleIngreso {
         this.id = id;
     }
 
-    public IngresoDeMercaderia getIngresoDeMercaderia() {
-        return ingresoDeMercaderia;
+    public Compra getCompra() {
+        return compra;
     }
 
-    public void setIngresoDeMercaderia(IngresoDeMercaderia ingresoDeMercaderia) {
-        this.ingresoDeMercaderia = ingresoDeMercaderia;
+    public void setCompra(Compra compra) {
+        this.compra = compra;
     }
 
     public Producto getProducto() {

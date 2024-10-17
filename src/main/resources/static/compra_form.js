@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const ingresoDeMercaderiaForm = document.getElementById("ingresoDeMercaderiaForm");
-    const formularioIngresoDeMercaderia = document.getElementById("formularioIngresoDeMercaderia");
+    const compraForm = document.getElementById("compraForm");
+    const formularioCompra = document.getElementById("formularioCompra");
     const totalCompraInput = document.getElementById("totalCompra");
     let barcodeInput = "";
     let barcodeTimer;
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             <div class="col-md-3">
                 <select class="form-control producto-select" name="producto">
-                    ${formularioIngresoDeMercaderia.querySelector('.producto-select').innerHTML}
+                    ${formularioCompra.querySelector('.producto-select').innerHTML}
                 </select>
             </div>
             <div class="col-md-2">
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `;
 
-        formularioIngresoDeMercaderia.appendChild(newRow);
+        formularioCompra.appendChild(newRow);
         const productoSelect = newRow.querySelector('.producto-select');
         productoSelect.addEventListener("change", function () {
             actualizarPrecio(newRow);
@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Función para eliminar una fila
     function eliminarFila(row) {
-        if (row === formularioIngresoDeMercaderia.querySelector('.row')) {
+        if (row === formularioCompra.querySelector('.row')) {
             limpiarFila(row); // Limpiar la fila primaria
         } else {
             row.remove(); // Eliminar filas dinámicas
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             e.preventDefault(); // Evitar que la tecla Enter provoque el envío del formulario
 
-            const currentRow = formularioIngresoDeMercaderia.lastElementChild;
+            const currentRow = formularioCompra.lastElementChild;
             filtrarPorCodigoDeBarra(barcodeInput, currentRow);
             barcodeInput = "";
 
@@ -183,12 +183,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 200); // Limpiar el input después de un breve tiempo de inactividad
     });
 
-    const agregarFilaBtn = ingresoDeMercaderiaForm.querySelector('#agregarFila');
+    const agregarFilaBtn = compraForm.querySelector('#agregarFila');
     agregarFilaBtn.addEventListener("click", function () {
         agregarFila(true);
     });
 
-    const firstRow = formularioIngresoDeMercaderia.querySelector('.row');
+    const firstRow = formularioCompra.querySelector('.row');
     const productoSelect = firstRow.querySelector('.producto-select');
     productoSelect.addEventListener("change", function () {
         actualizarPrecio(firstRow);
@@ -202,12 +202,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Manejar la selección del cliente desde el select
-    //const clienteSelect = document.getElementById("rubroSelect");
+    // Manejar la selección del proveedor desde el select
+    //const proveedorSelect = document.getElementById("rubroSelect");
 
     // Función para enviar los datos al servidor
     function enviarDatos() {
-        const formData = new FormData(ingresoDeMercaderiaForm);
+        const formData = new FormData(compraForm);
 
         const compra = {
             proveedorId: formData.get("proveedor"),
@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
             detalles: []
         };
 
-        formularioIngresoDeMercaderia.querySelectorAll(".row").forEach(row => {
+        formularioCompra.querySelectorAll(".row").forEach(row => {
             const codigo = row.querySelector('.codigo-input').value;
             const producto = row.querySelector('.producto-select').value;
             const cantidad = parseFloat(row.querySelector('.cantidad-input').value);
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         console.log("Compra:", compra);
 
-       fetch("/ingresoDeMercaderia/registro", {
+       fetch("/compra/registro", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -247,16 +247,16 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             if (data.message) {
                 alert(data.message);
-                window.location.href = "/ingresoDeMercaderia/registrar";
+                window.location.href = "/compra/registrar";
             } else if (data.error) {
                 alert(data.error);
-                window.location.href = "/ingresoDeMercaderia/registrar";
+                window.location.href = "/compra/registrar";
             }
         })
         .catch((error) => console.error("Error en fetch:", error));
     }
 
-    ingresoDeMercaderiaForm.addEventListener("submit", function (e) {
+    compraForm.addEventListener("submit", function (e) {
         e.preventDefault(); // Prevenir el envío normal del formulario
         enviarDatos(); // Llamar a la función para enviar los datos
     });

@@ -40,11 +40,11 @@
     max-width: none; /* Quita el max-width para que no limite el tamaño */
 }
 
-#formularioIngresoDeMercaderia .row button {
+#formularioCompra .row button {
     margin-top: 0 !important;
 }
 
-#formularioIngresoDeMercaderia .row .col-md-1 button {
+#formularioCompra .row .col-md-1 button {
     margin-top: 0 !important;
     width: 100%; /* Ajusta el tamaño del botón para que coincida con las demás columnas */
     height: calc(2.5rem + 2px); /* Asegura que la altura del botón coincida con la de los inputs */
@@ -78,19 +78,19 @@
     border-radius: .25rem; /* Ajusta los bordes redondeados si es necesario */
 }
 
-#formularioIngresoDeMercaderia .row {
+#formularioCompra .row {
     margin-bottom: 1rem; /* Espacio entre filas si es necesario */
 }
 
-#dformularioIngresoDeMercaderia .row .form-control {
+#dformularioCompra .row .form-control {
     height: calc(2.5rem + 2px); /* Ajusta la altura de los inputs para que coincida con la del botón */
 }
 
-#formularioIngresoDeMercaderia .row .col-md-1 {
+#formularioCompra .row .col-md-1 {
     padding-right: 0; /* Elimina el padding derecho para alinear mejor el botón */
 }
 
-#formularioIngresoDeMercaderia .row .col-md-1 .btn-icon {
+#formularioCompra .row .col-md-1 .btn-icon {
     height: calc(2.5rem + 2px); /* Ajusta la altura del botón para que coincida con los inputs */
     font-size: 1.5rem; /* Asegura que el tamaño del signo "+" sea apropiado */
 }

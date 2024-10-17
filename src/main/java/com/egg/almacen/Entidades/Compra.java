@@ -17,7 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-public class IngresoDeMercaderia {
+public class Compra {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,12 +35,12 @@ public class IngresoDeMercaderia {
 //    @ManyToOne
 //    private Producto producto;
     
-    @OneToMany(mappedBy = "ingresoDeMercaderia", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<DetalleIngreso> detalles;
+    @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<DetalleCompra> detalles;
     
     private Double totalCompra;      
     
-    public IngresoDeMercaderia() {
+    public Compra() {
     }
 
     public Long getId() {
@@ -83,11 +83,11 @@ public class IngresoDeMercaderia {
 //        this.producto = producto;
 //    }
 
-    public Set<DetalleIngreso> getDetalles() {
+    public Set<DetalleCompra> getDetalles() {
         return detalles;
     }
 
-    public void setDetalles(Set<DetalleIngreso> detalles) {
+    public void setDetalles(Set<DetalleCompra> detalles) {
         this.detalles = detalles;
     }
 
