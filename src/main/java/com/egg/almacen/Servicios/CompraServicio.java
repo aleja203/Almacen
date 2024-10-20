@@ -4,6 +4,7 @@ package com.egg.almacen.Servicios;
 import com.egg.almacen.DTO.CompraDTO;
 import com.egg.almacen.Entidades.DetalleCompra;
 import com.egg.almacen.Entidades.Compra;
+import com.egg.almacen.Entidades.Movimiento;
 import com.egg.almacen.Entidades.Producto;
 import com.egg.almacen.Entidades.Proveedor;
 import com.egg.almacen.Excepciones.MiException;
@@ -34,76 +35,159 @@ public class CompraServicio {
     @Autowired
     private MovimientoServicio movimientoServicio;
     @Autowired
+    private MovimientoRepositorio movimientoRepositorio;
+    @Autowired
     private ProveedorRepositorio proveedorRepositorio;
    
+//    @Transactional
+//    public Map<String, Object> crearCompra(CompraDTO compraDTO) {
+//        Map<String, Object> response = new HashMap<>();
+//
+//        try {
+//            Compra compra = new Compra();
+//
+//            // Verificar si el clienteId no es nulo ni vacío
+//            // if (compraDTO.getProveedorId() != null) {
+//            if (compraDTO.getProveedorId() != null && !compraDTO.getProveedorId().trim().isEmpty()) {
+//                // Buscar el cliente por su ID
+//                Proveedor proveedor = proveedorRepositorio.findById(compraDTO.getProveedorId())
+//                        .orElseThrow(() -> new RuntimeException("Proveedor no encontrado: " + compraDTO.getProveedorId()));
+//                // Asignar el cliente encontrado
+//                compra.setProveedor(proveedor);
+//            }
+//
+//            // Continuar con la asignación de los demás campos de la venta
+//            compra.setObservaciones(compraDTO.getObservaciones());
+//            compra.setTotalCompra(compraDTO.getTotalCompra());
+//            compra.setFecha(new Date());  // Establecer la fecha actual
+//
+//            // Convertir DTOs de detalles a entidades
+//            Set<DetalleCompra> detalles = compraDTO.getDetalles().stream()
+//                    .map(detalleDTO -> {
+//                        DetalleCompra detalle = new DetalleCompra();
+//                        detalle.setCantidad(detalleDTO.getCantidad());
+//                        detalle.setCosto(detalleDTO.getCosto());
+//                        detalle.setTotal(detalleDTO.getTotal());
+//
+//                        // Buscar el producto por código de barras
+//                        Producto producto = productoRepositorio.findByCodigo(detalleDTO.getProducto());
+//
+//                        if (producto != null) {
+//                            
+//                             producto.setExistencia(producto.getExistencia() + detalleDTO.getCantidad());
+//
+//                        // Guardar el producto con la nueva existencia
+//                        productoRepositorio.save(producto);
+//                            
+//                            detalle.setProducto(producto);
+//                        } else {
+//                            throw new RuntimeException("Producto no encontrado: " + detalleDTO.getProducto());
+//                        }
+//
+//                        detalle.setCompra(compra);  // Establecer la relación bidireccional
+//                        return detalle;
+//                    })
+//                    .collect(Collectors.toSet());
+//
+//            compra.setDetalles(detalles);
+//
+//            // Guardar la entidad Venta en la base de datos
+//            compraRepositorio.save(compra);
+//
+//            // Devolver un mensaje de éxito
+//            response.put("message", "Ingreso registrado exitosamente.");
+//            return response;
+//        } catch (RuntimeException e) {
+//            // Captura de errores específicos (Producto no encontrado o Cliente no encontrado)
+//            response.put("error", "Error al registrar el ingreso: " + e.getMessage());
+//            return response;
+//        } catch (Exception e) {
+//            // Captura de otros errores generales
+//            response.put("error", "Error inesperado al registrar el ingreso.");
+//            return response;
+//        }
+//    }    
     @Transactional
     public Map<String, Object> crearCompra(CompraDTO compraDTO) {
-        Map<String, Object> response = new HashMap<>();
+    Map<String, Object> response = new HashMap<>();
 
-        try {
-            Compra compra = new Compra();
+    try {
+        Compra compra = new Compra();
 
-            // Verificar si el clienteId no es nulo ni vacío
-            // if (compraDTO.getProveedorId() != null) {
-            if (compraDTO.getProveedorId() != null && !compraDTO.getProveedorId().trim().isEmpty()) {
-                // Buscar el cliente por su ID
-                Proveedor proveedor = proveedorRepositorio.findById(compraDTO.getProveedorId())
-                        .orElseThrow(() -> new RuntimeException("Proveedor no encontrado: " + compraDTO.getProveedorId()));
-                // Asignar el cliente encontrado
-                compra.setProveedor(proveedor);
-            }
-
-            // Continuar con la asignación de los demás campos de la venta
-            compra.setObservaciones(compraDTO.getObservaciones());
-            compra.setTotalCompra(compraDTO.getTotalCompra());
-            compra.setFecha(new Date());  // Establecer la fecha actual
-
-            // Convertir DTOs de detalles a entidades
-            Set<DetalleCompra> detalles = compraDTO.getDetalles().stream()
-                    .map(detalleDTO -> {
-                        DetalleCompra detalle = new DetalleCompra();
-                        detalle.setCantidad(detalleDTO.getCantidad());
-                        detalle.setCosto(detalleDTO.getCosto());
-                        detalle.setTotal(detalleDTO.getTotal());
-
-                        // Buscar el producto por código de barras
-                        Producto producto = productoRepositorio.findByCodigo(detalleDTO.getProducto());
-
-                        if (producto != null) {
-                            
-                             producto.setExistencia(producto.getExistencia() + detalleDTO.getCantidad());
-
-                        // Guardar el producto con la nueva existencia
-                        productoRepositorio.save(producto);
-                            
-                            detalle.setProducto(producto);
-                        } else {
-                            throw new RuntimeException("Producto no encontrado: " + detalleDTO.getProducto());
-                        }
-
-                        detalle.setCompra(compra);  // Establecer la relación bidireccional
-                        return detalle;
-                    })
-                    .collect(Collectors.toSet());
-
-            compra.setDetalles(detalles);
-
-            // Guardar la entidad Venta en la base de datos
-            compraRepositorio.save(compra);
-
-            // Devolver un mensaje de éxito
-            response.put("message", "Ingreso registrado exitosamente.");
-            return response;
-        } catch (RuntimeException e) {
-            // Captura de errores específicos (Producto no encontrado o Cliente no encontrado)
-            response.put("error", "Error al registrar el ingreso: " + e.getMessage());
-            return response;
-        } catch (Exception e) {
-            // Captura de otros errores generales
-            response.put("error", "Error inesperado al registrar el ingreso.");
-            return response;
+        // Verificar si el proveedorId no es nulo ni vacío
+        if (compraDTO.getProveedorId() != null && !compraDTO.getProveedorId().trim().isEmpty()) {
+            Proveedor proveedor = proveedorRepositorio.findById(compraDTO.getProveedorId())
+                    .orElseThrow(() -> new RuntimeException("Proveedor no encontrado: " + compraDTO.getProveedorId()));
+            compra.setProveedor(proveedor);
         }
-    }    
+
+        // Asignar los demás campos de la compra
+        compra.setObservaciones(compraDTO.getObservaciones());
+        compra.setTotalCompra(compraDTO.getTotalCompra());
+        compra.setFecha(new Date());
+
+        // Convertir DTOs de detalles a entidades
+        Set<DetalleCompra> detalles = compraDTO.getDetalles().stream()
+                .map(detalleDTO -> {
+                    DetalleCompra detalle = new DetalleCompra();
+                    detalle.setCantidad(detalleDTO.getCantidad());
+                    detalle.setCosto(detalleDTO.getCosto());
+                    detalle.setTotal(detalleDTO.getTotal());
+
+                    // Buscar el producto por código de barras
+                    Producto producto = productoRepositorio.findByCodigo(detalleDTO.getProducto());
+
+                    if (producto != null) {
+                        // Actualizar la existencia del producto
+                        producto.setExistencia(producto.getExistencia() + detalleDTO.getCantidad());
+                        productoRepositorio.save(producto);
+
+                        detalle.setProducto(producto);
+
+                        // Crear el movimiento antes de guardar la compra
+                        Movimiento movimiento = new Movimiento();
+                        movimiento.setFecha(new Date());
+                        movimiento.setTipo("COMPRA");
+                        movimiento.setProvCli(compra.getProveedor().getNombre());
+
+                        // Primero, guardamos la compra para tener su ID disponible
+                        compraRepositorio.save(compra);
+
+                        // Asignar el ID de la compra al movimiento
+                        movimiento.setFactura(compra.getId());  // Usar el ID de la compra
+                        
+                        // Cambiar a la descripción del producto en lugar del código
+                        movimiento.setProducto(producto.getDescripcion());  // Cambiar de nombre a descripción
+                        movimiento.setCantidad(detalleDTO.getCantidad());
+                        movimiento.setPrecio(detalleDTO.getCosto());  // Para compras es costo
+                        movimientoRepositorio.save(movimiento);
+                        
+                    } else {
+                        throw new RuntimeException("Producto no encontrado: " + detalleDTO.getProducto());
+                    }
+
+                    detalle.setCompra(compra);  // Relación bidireccional
+                    return detalle;
+                })
+                .collect(Collectors.toSet());
+
+        compra.setDetalles(detalles);
+
+        // Guardar la entidad Compra en la base de datos
+        // La compra se guarda antes de intentar acceder a su ID, ya se hizo arriba.
+
+        // Mensaje de éxito
+        response.put("message", "Compra registrada exitosamente.");
+        return response;
+    } catch (RuntimeException e) {
+        response.put("error", "Error al registrar la compra: " + e.getMessage());
+        return response;
+    } catch (Exception e) {
+        response.put("error", "Error inesperado al registrar la compra.");
+        return response;
+    }
+}
+
     
     public List<Map<String, Object>> listarDetalle() {
     List<Compra> compras = compraRepositorio.listarConDetalles();

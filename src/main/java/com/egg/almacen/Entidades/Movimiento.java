@@ -1,6 +1,7 @@
 
 package com.egg.almacen.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import java.util.UUID;
 import javax.persistence.Entity;
@@ -17,65 +18,30 @@ import javax.persistence.TemporalType;
 public class Movimiento {
     
     @Id
-    private String id;
-    @ManyToOne
-    @JoinColumn(name = "producto_codigo", referencedColumnName = "codigo")
-    private Producto producto;
-    @ManyToOne
-    private Proveedor proveedor;
-    private Integer cantidad;
-    private String tipo; // "VENTA" o "INGRESO"
-    private Double valor;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
     @Temporal(TemporalType.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date fecha;
-    private String detalle;
-
+    
+    private String tipo; // "VENTA" o "INGRESO"
+    private String provCli;
+    private Long factura;
+    private String producto;
+        
+    private Double cantidad;
+    private Double precio;
+    
     public Movimiento() {
     }
 
-    @PrePersist
-    public void generarId() {
-        this.id = UUID.randomUUID().toString();
-    }
-    
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public Double getValor() {
-        return valor;
-    }
-
-    public void setValor(Double valor) {
-        this.valor = valor;
     }
 
     public Date getFecha() {
@@ -86,22 +52,54 @@ public class Movimiento {
         this.fecha = fecha;
     }
 
-    public String getDetalle() {
-        return detalle;
+    public String getTipo() {
+        return tipo;
     }
 
-    public void setDetalle(String detalle) {
-        this.detalle = detalle;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
-    public Proveedor getProveedor() {
-        return proveedor;
+    public String getProvCli() {
+        return provCli;
     }
 
-    public void setProveedor(Proveedor proveedor) {
-        this.proveedor = proveedor;
+    public void setProvCli(String provCli) {
+        this.provCli = provCli;
     }
-    
+
+    public Long getFactura() {
+        return factura;
+    }
+
+    public void setFactura(Long factura) {
+        this.factura = factura;
+    }
+
+    public String getProducto() {
+        return producto;
+    }
+
+    public void setProducto(String producto) {
+        this.producto = producto;
+    }
+
+    public Double getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Double cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
+    }
+
     
     
 }

@@ -6,11 +6,13 @@ import com.egg.almacen.DTO.DetalleVentaDTO;
 import com.egg.almacen.DTO.VentaDTO;
 import com.egg.almacen.Entidades.Cliente;
 import com.egg.almacen.Entidades.DetalleVenta;
+import com.egg.almacen.Entidades.Movimiento;
 import com.egg.almacen.Entidades.Venta;
 import com.egg.almacen.Entidades.Producto;
 import com.egg.almacen.Excepciones.MiException;
 import com.egg.almacen.Repositorios.ClienteRepositorio;
 import com.egg.almacen.Repositorios.DetalleVentaRepositorio;
+import com.egg.almacen.Repositorios.MovimientoRepositorio;
 import com.egg.almacen.Repositorios.ProductoRepositorio;
 import com.egg.almacen.Repositorios.VentaRepositorio;
 import java.util.ArrayList;
@@ -38,77 +40,180 @@ public class VentaServicio {
     @Autowired
     private MovimientoServicio movimientoServicio;
     @Autowired
+    private MovimientoRepositorio movimientoRepositorio;
+    @Autowired
     private ClienteRepositorio clienteRepositorio;
 
+//    @Transactional
+//    public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
+//        Map<String, Object> response = new HashMap<>();
+//
+//        try {
+//            Venta venta = new Venta();
+//
+//            // Verificar si el clienteId no es nulo ni vacío
+//            if (ventaDTO.getClienteId() != null) {
+//                // Buscar el cliente por su ID
+//                Cliente cliente = clienteRepositorio.findById(ventaDTO.getClienteId())
+//                        .orElseThrow(() -> new RuntimeException("Cliente no encontrado: " + ventaDTO.getClienteId()));
+//                System.out.println("El cliente es: " + ventaDTO.getClienteId());
+//                // Asignar el cliente encontrado
+//                venta.setCliente(cliente);
+//            }
+//
+//            // Continuar con la asignación de los demás campos de la venta
+//            venta.setObservaciones(ventaDTO.getObservaciones());
+//            venta.setTotalVenta(ventaDTO.getTotalVenta());
+//            venta.setFecha(new Date());  // Establecer la fecha actual
+//
+//            // Convertir DTOs de detalles a entidades
+//            Set<DetalleVenta> detalles = ventaDTO.getDetalles().stream()
+//                    .map(detalleDTO -> {
+//                        DetalleVenta detalle = new DetalleVenta();
+//                        detalle.setCantidad(detalleDTO.getCantidad());
+//                        detalle.setPrecioVenta(detalleDTO.getPrecioVenta());
+//                        detalle.setTotal(detalleDTO.getTotal());
+//
+//                        // Buscar el producto por código de barras
+//                        Producto producto = productoRepositorio.findByCodigo(detalleDTO.getProducto());
+//
+//                        if (producto != null) {
+//                            
+//                         producto.setExistencia(producto.getExistencia() - detalleDTO.getCantidad());
+//
+//                        // Guardar el producto con la nueva existencia
+//                        productoRepositorio.save(producto);   
+//                            
+//                            detalle.setProducto(producto);
+//                            
+//                        // Crear y guardar un movimiento para este detalle
+//                        Movimiento movimiento = new Movimiento();
+//                        movimiento.setFecha(new Date());
+//                        movimiento.setTipo("VENTA");
+//                        movimiento.setProvCli(venta.getCliente().getNombre());
+//                        movimiento.setFactura(venta.getId());
+//                        movimiento.setProducto(detalleDTO.getProducto());
+//                        movimiento.setCantidad(detalleDTO.getCantidad());
+//                        movimiento.setPrecio(detalleDTO.getPrecioVenta());
+//                        movimientoRepositorio.save(movimiento);
+//                            
+//                        } else {
+//                            throw new RuntimeException("Producto no encontrado: " + detalleDTO.getProducto());
+//                        }
+//
+//                        detalle.setVenta(venta);  // Establecer la relación bidireccional
+//                        return detalle;
+//                    })
+//                    .collect(Collectors.toSet());
+//
+//            venta.setDetalles(detalles);
+//
+//            // Guardar la entidad Venta en la base de datos
+//            ventaRepositorio.save(venta);
+//
+//            // Devolver un mensaje de éxito
+//            response.put("message", "Venta registrada exitosamente.");
+//            return response;
+//        } catch (RuntimeException e) {
+//            // Captura de errores específicos (Producto no encontrado o Cliente no encontrado)
+//            response.put("error", "Error al registrar la venta: " + e.getMessage());
+//            return response;
+//        } catch (Exception e) {
+//            // Captura de otros errores generales
+//            response.put("error", "Error inesperado al registrar la venta.");
+//            return response;
+//        }
+//    }
     @Transactional
     public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
-        Map<String, Object> response = new HashMap<>();
+    Map<String, Object> response = new HashMap<>();
 
-        try {
-            Venta venta = new Venta();
+    try {
+        Venta venta = new Venta();
 
-            // Verificar si el clienteId no es nulo ni vacío
-            if (ventaDTO.getClienteId() != null) {
-                // Buscar el cliente por su ID
-                Cliente cliente = clienteRepositorio.findById(ventaDTO.getClienteId())
-                        .orElseThrow(() -> new RuntimeException("Cliente no encontrado: " + ventaDTO.getClienteId()));
-                System.out.println("El cliente es: " + ventaDTO.getClienteId());
-                // Asignar el cliente encontrado
-                venta.setCliente(cliente);
-            }
+        // Verificar si el clienteId no es nulo ni vacío
+        if (ventaDTO.getClienteId() != null) {
+            // Buscar el cliente por su ID
+            Cliente cliente = clienteRepositorio.findById(ventaDTO.getClienteId())
+                    .orElseThrow(() -> new RuntimeException("Cliente no encontrado: " + ventaDTO.getClienteId()));
+            System.out.println("El cliente es: " + ventaDTO.getClienteId());
+            // Asignar el cliente encontrado
+            venta.setCliente(cliente);
+        }
 
-            // Continuar con la asignación de los demás campos de la venta
-            venta.setObservaciones(ventaDTO.getObservaciones());
-            venta.setTotalVenta(ventaDTO.getTotalVenta());
-            venta.setFecha(new Date());  // Establecer la fecha actual
+        // Continuar con la asignación de los demás campos de la venta
+        venta.setObservaciones(ventaDTO.getObservaciones());
+        venta.setTotalVenta(ventaDTO.getTotalVenta());
+        venta.setFecha(new Date());  // Establecer la fecha actual
 
-            // Convertir DTOs de detalles a entidades
-            Set<DetalleVenta> detalles = ventaDTO.getDetalles().stream()
-                    .map(detalleDTO -> {
-                        DetalleVenta detalle = new DetalleVenta();
-                        detalle.setCantidad(detalleDTO.getCantidad());
-                        detalle.setPrecioVenta(detalleDTO.getPrecioVenta());
-                        detalle.setTotal(detalleDTO.getTotal());
+        // Convertir DTOs de detalles a entidades
+        Set<DetalleVenta> detalles = ventaDTO.getDetalles().stream()
+                .map(detalleDTO -> {
+                    DetalleVenta detalle = new DetalleVenta();
+                    detalle.setCantidad(detalleDTO.getCantidad());
+                    detalle.setPrecioVenta(detalleDTO.getPrecioVenta());
+                    detalle.setTotal(detalleDTO.getTotal());
 
-                        // Buscar el producto por código de barras
-                        Producto producto = productoRepositorio.findByCodigo(detalleDTO.getProducto());
+                    // Buscar el producto por código de barras
+                    Producto producto = productoRepositorio.findByCodigo(detalleDTO.getProducto());
 
-                        if (producto != null) {
-                            
-                         producto.setExistencia(producto.getExistencia() - detalleDTO.getCantidad());
+                    if (producto != null) {
+                        producto.setExistencia(producto.getExistencia() - detalleDTO.getCantidad());
 
                         // Guardar el producto con la nueva existencia
-                        productoRepositorio.save(producto);   
-                            
-                            detalle.setProducto(producto);
-                        } else {
-                            throw new RuntimeException("Producto no encontrado: " + detalleDTO.getProducto());
-                        }
+                        productoRepositorio.save(producto);
 
-                        detalle.setVenta(venta);  // Establecer la relación bidireccional
-                        return detalle;
-                    })
-                    .collect(Collectors.toSet());
+                        detalle.setProducto(producto);
+                        
+                        // Crear y guardar un movimiento para este detalle
+                        Movimiento movimiento = new Movimiento();
+                        movimiento.setFecha(new Date());
+                        movimiento.setTipo("VENTA");
+                        movimiento.setProvCli(venta.getCliente().getNombre());
+                        
+                        // Aquí guardamos la venta antes para tener su ID
+                        ventaRepositorio.save(venta);
+                        
+                        // Asegúrate de que el movimiento use el ID de la venta
+                        movimiento.setFactura(venta.getId());  // Establecer el ID de la venta
+                        
+                        // Establecer el nombre del producto (descripción) en el movimiento
+                        movimiento.setProducto(producto.getDescripcion());  // Cambiar de código a descripción
+                        movimiento.setCantidad(detalleDTO.getCantidad());
+                        movimiento.setPrecio(detalleDTO.getPrecioVenta());
+                        movimientoRepositorio.save(movimiento);
 
-            venta.setDetalles(detalles);
+                    } else {
+                        throw new RuntimeException("Producto no encontrado: " + detalleDTO.getProducto());
+                    }
 
-            // Guardar la entidad Venta en la base de datos
-            ventaRepositorio.save(venta);
+                    detalle.setVenta(venta);  // Establecer la relación bidireccional
+                    return detalle;
+                })
+                .collect(Collectors.toSet());
 
-            // Devolver un mensaje de éxito
-            response.put("message", "Venta registrada exitosamente.");
-            return response;
-        } catch (RuntimeException e) {
-            // Captura de errores específicos (Producto no encontrado o Cliente no encontrado)
-            response.put("error", "Error al registrar la venta: " + e.getMessage());
-            return response;
-        } catch (Exception e) {
-            // Captura de otros errores generales
-            response.put("error", "Error inesperado al registrar la venta.");
-            return response;
-        }
+        venta.setDetalles(detalles);
+
+        // Guardar la entidad Venta en la base de datos
+        // La venta se guarda ya dentro del bucle para asegurarnos de tener el ID antes de crear el movimiento
+        // Esto se puede simplificar al guardar solo al final, pero asegurate de que el ID esté disponible
+        // ventaRepositorio.save(venta);
+
+        // Devolver un mensaje de éxito
+        response.put("message", "Venta registrada exitosamente.");
+        return response;
+    } catch (RuntimeException e) {
+        // Captura de errores específicos (Producto no encontrado o Cliente no encontrado)
+        response.put("error", "Error al registrar la venta: " + e.getMessage());
+        return response;
+    } catch (Exception e) {
+        // Captura de otros errores generales
+        response.put("error", "Error inesperado al registrar la venta.");
+        return response;
     }
+}
 
+    
     public List<Map<String, Object>> listarDetalle() {
     List<Venta> ventas = ventaRepositorio.listarConDetalles();
     List<Map<String, Object>> resultado = new ArrayList<>();

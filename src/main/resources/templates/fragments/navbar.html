@@ -103,6 +103,15 @@
                     <li><a class="dropdown-item" th:href="@{/compra/listaCompra}">Listar compras</a></li>
                 </ul>
             </li>
+            
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Movimientos
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" th:href="@{/movimiento/lista}">Listar movimientos</a></li>
+                </ul>
+            </li>
            
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" th:if="${session.usuariosession != null}"  href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

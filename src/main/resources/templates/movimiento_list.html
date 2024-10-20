@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="/fragments/head :: head"></head>
+
+<body>
+
+    <nav th:replace="/fragments/navbar :: nav"></nav>
+
+    <div th:if="${error != null}" class="card text-white bg-danger mb-3 mensajeError">
+        <div class="card-body">
+            <h5 class="card-title">Error 👎</h5>
+            <p class="card-text" th:text="${error}"></p>
+        </div>
+    </div>
+    <div th:if="${exito != null}" class="card text-white bg-success mb-3 mt-3 mensajeExito">
+        <div class="card-body">
+            <h5 class="card-title">Éxito!</h5>
+            <p class="card-text" th:text="${exito}"></p>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <!-- Fila para los filtros -->
+        <div class="row justify-content-center mb-3">
+            <div class="col-md-2">
+                <label for="tipoSelect">Tipo:</label>
+                <select id="tipoSelect" class="form-control">
+                    <option value="">Seleccionar tipo</option>
+                    <option th:each="tipo : ${tipos}" th:value="${tipo}" th:text="${tipo}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="provCliSelect">Proveedor/Cliente:</label>
+                <select id="provCliSelect" class="form-control">
+                    <option value="">Seleccionar Proveedor/Cliente</option>
+                    <option th:each="provCli : ${proveedoresClientes}" th:value="${provCli}" th:text="${provCli}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="productoSelect">Producto:</label>
+                <select id="productoSelect" class="form-control">
+                    <option value="">Seleccionar Producto</option>
+                    <option th:each="producto : ${productos}" th:value="${producto}" th:text="${producto}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="fechaDesde">Fecha Desde:</label>
+                <input type="text" id="fechaDesde" class="form-control" placeholder="dd/mm/aaaa" onfocus="(this.type='date')" required>
+            </div>
+            <div class="col-md-2">
+                <label for="fechaHasta">Fecha Hasta:</label>
+                <input type="text" id="fechaHasta" class="form-control" placeholder="dd/mm/aaaa" onfocus="(this.type='date')" required>
+            </div>
+        </div>
+
+        <!-- Botón de reiniciar filtros -->
+        <div class="row justify-content-center mb-3">
+            <div class="col-auto">
+                <a th:href="@{/movimiento/listaDetalle}" class="btn btn-secondary btn-sm">Reiniciar filtros</a>
+            </div>
+        </div>
+
+        <!-- Tabla -->
+        <div class="table-container">
+            <table class="table table-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Proveedor/Cliente</th>
+                        <th scope="col">Factura</th>
+                        <th scope="col">Producto</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="movimiento : ${movimientos}">
+                        <td th:text="${#dates.format(movimiento.fecha, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${movimiento.tipo}"></td>
+                        <td th:text="${movimiento.provCli}"></td>
+                        <td th:text="${movimiento.factura}"></td>
+                        <td th:text="${movimiento.producto}"></td>
+                        <td th:text="${movimiento.cantidad}"></td>
+                        <td th:text="${movimiento.precio}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <section class="text-center container">
+        <div class="row mt-3">
+            <div class="divVolver">
+                <a th:href="@{/}" class="btn btn-secondary my-2 botonVolver botones">Volver</a>
+            </div>
+        </div>
+    </section>
+
+    <footer th:replace="/fragments/footer :: footer"></footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <script src="/movimiento_list.js"></script>
+</body>
+
+</html>

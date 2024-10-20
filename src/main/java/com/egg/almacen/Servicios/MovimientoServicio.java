@@ -5,65 +5,28 @@ import com.egg.almacen.Entidades.Movimiento;
 import com.egg.almacen.Entidades.Producto;
 import com.egg.almacen.Entidades.Proveedor;
 import com.egg.almacen.Repositorios.MovimientoRepositorio;
-import com.egg.almacen.Repositorios.ProductoRepositorio;
-import com.egg.almacen.Repositorios.ProveedorRepositorio;
-import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class MovimientoServicio {
     
     @Autowired
     private MovimientoRepositorio movimientoRepositorio;
-    @Autowired
-    private ProductoRepositorio productoRepositorio;
-     @Autowired
-    private ProveedorRepositorio proveedorRepositorio;
     
-    @Transactional
-    public void registrarMovimiento(Producto producto, Integer cantidad, Double valor, String tipo, String detalle) {
-        Movimiento movimiento = new Movimiento();
-        movimiento.setProducto(producto);
-        movimiento.setCantidad(cantidad);
-        movimiento.setValor(valor);
-        movimiento.setTipo(tipo);
-        movimiento.setDetalle(detalle);
-        movimiento.setFecha(new Date());
-
-        // Persistir el movimiento
-        movimientoRepositorio.save(movimiento);
-        
-        if (tipo.equals("VENTA")) {
-            producto.setExistencia(producto.getExistencia() - cantidad);
-        } else if (tipo.equals("INGRESO")) {
-            producto.setExistencia(producto.getExistencia() + cantidad);
-        }
-        productoRepositorio.save(producto);
-    }
     
-    @Transactional
-    public void registrarMovimiento(Producto producto, Integer cantidad, Double valor, String tipo, String detalle, Proveedor proveedor) {
-        Movimiento movimiento = new Movimiento();
-        movimiento.setProducto(producto);
-        movimiento.setCantidad(cantidad);
-        movimiento.setValor(valor);
-        movimiento.setTipo(tipo);
-        movimiento.setDetalle(detalle);
-        movimiento.setFecha(new Date());
-        movimiento.setProveedor(proveedor);
+    public List<Movimiento> listarMovimiento() {
+    
+        List<Movimiento> movimientos = new ArrayList();
+        movimientos = movimientoRepositorio.findAll();
 
-        // Persistir el movimiento
-        movimientoRepositorio.save(movimiento);
-        
-        if (tipo.equals("VENTA")) {
-            producto.setExistencia(producto.getExistencia() - cantidad);
-        } else if (tipo.equals("INGRESO")) {
-            producto.setExistencia(producto.getExistencia() + cantidad);
-        }
-        productoRepositorio.save(producto);
+        return movimientos;
     }
+
      
 }

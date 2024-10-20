@@ -24,7 +24,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class Venta {
 
     @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Temporal(TemporalType.DATE)
