@@ -39,74 +39,6 @@ public class CompraServicio {
     @Autowired
     private ProveedorRepositorio proveedorRepositorio;
    
-//    @Transactional
-//    public Map<String, Object> crearCompra(CompraDTO compraDTO) {
-//        Map<String, Object> response = new HashMap<>();
-//
-//        try {
-//            Compra compra = new Compra();
-//
-//            // Verificar si el clienteId no es nulo ni vacío
-//            // if (compraDTO.getProveedorId() != null) {
-//            if (compraDTO.getProveedorId() != null && !compraDTO.getProveedorId().trim().isEmpty()) {
-//                // Buscar el cliente por su ID
-//                Proveedor proveedor = proveedorRepositorio.findById(compraDTO.getProveedorId())
-//                        .orElseThrow(() -> new RuntimeException("Proveedor no encontrado: " + compraDTO.getProveedorId()));
-//                // Asignar el cliente encontrado
-//                compra.setProveedor(proveedor);
-//            }
-//
-//            // Continuar con la asignación de los demás campos de la venta
-//            compra.setObservaciones(compraDTO.getObservaciones());
-//            compra.setTotalCompra(compraDTO.getTotalCompra());
-//            compra.setFecha(new Date());  // Establecer la fecha actual
-//
-//            // Convertir DTOs de detalles a entidades
-//            Set<DetalleCompra> detalles = compraDTO.getDetalles().stream()
-//                    .map(detalleDTO -> {
-//                        DetalleCompra detalle = new DetalleCompra();
-//                        detalle.setCantidad(detalleDTO.getCantidad());
-//                        detalle.setCosto(detalleDTO.getCosto());
-//                        detalle.setTotal(detalleDTO.getTotal());
-//
-//                        // Buscar el producto por código de barras
-//                        Producto producto = productoRepositorio.findByCodigo(detalleDTO.getProducto());
-//
-//                        if (producto != null) {
-//                            
-//                             producto.setExistencia(producto.getExistencia() + detalleDTO.getCantidad());
-//
-//                        // Guardar el producto con la nueva existencia
-//                        productoRepositorio.save(producto);
-//                            
-//                            detalle.setProducto(producto);
-//                        } else {
-//                            throw new RuntimeException("Producto no encontrado: " + detalleDTO.getProducto());
-//                        }
-//
-//                        detalle.setCompra(compra);  // Establecer la relación bidireccional
-//                        return detalle;
-//                    })
-//                    .collect(Collectors.toSet());
-//
-//            compra.setDetalles(detalles);
-//
-//            // Guardar la entidad Venta en la base de datos
-//            compraRepositorio.save(compra);
-//
-//            // Devolver un mensaje de éxito
-//            response.put("message", "Ingreso registrado exitosamente.");
-//            return response;
-//        } catch (RuntimeException e) {
-//            // Captura de errores específicos (Producto no encontrado o Cliente no encontrado)
-//            response.put("error", "Error al registrar el ingreso: " + e.getMessage());
-//            return response;
-//        } catch (Exception e) {
-//            // Captura de otros errores generales
-//            response.put("error", "Error inesperado al registrar el ingreso.");
-//            return response;
-//        }
-//    }    
     @Transactional
     public Map<String, Object> crearCompra(CompraDTO compraDTO) {
     Map<String, Object> response = new HashMap<>();
@@ -231,6 +163,28 @@ public class CompraServicio {
             // Buscar la compra por ID
             Compra compra = compraRepositorio.findById(compraId)
                     .orElseThrow(() -> new RuntimeException("Compra no encontrada: " + compraId));
+            
+            // Obtener todos los movimientos relacionados con esta compra por su factura (ID de compra)
+            List<Movimiento> movimientos = movimientoRepositorio.findByFactura(compraId);
+        
+            // Eliminar todos los movimientos asociados a la compra
+            for (Movimiento movimiento : movimientos) {
+                if ("COMPRA".equals(movimiento.getTipo())) { // Comprobar si el tipo es "COMPRA"
+                    movimientoRepositorio.delete(movimiento);
+                }
+        }
+            
+            // Iterar sobre los detalles de la compra antes de eliminarla
+            for (DetalleCompra detalle : compra.getDetalles()) {
+                Producto producto = detalle.getProducto();
+                Double cantidadComprada = detalle.getCantidad();
+
+                // Sumar la cantidad comprada de nuevo al stock del producto
+                producto.setExistencia(producto.getExistencia() - cantidadComprada);
+
+                // Guardar el cambio de stock en el repositorio de productos
+                productoRepositorio.save(producto);
+            }
 
             // Eliminar la compra (esto eliminará automáticamente los detalles relacionados)
             compraRepositorio.delete(compra);
