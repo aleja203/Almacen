@@ -2,6 +2,94 @@ document.addEventListener("DOMContentLoaded", function () {
     const ventaForm = document.getElementById("ventaForm");
     const formularioVenta = document.getElementById("formularioVenta");
     const totalVentaInput = document.getElementById("totalVenta");
+    const importeInput = document.querySelector('.importe-input');
+    const formularioPago = document.getElementById("formularioPago"); // contenedor para formas de pago
+    
+    function sincronizarImporte() {
+        const primerImporte = formularioPago.querySelector('.importe-input');
+        if (totalVentaInput && primerImporte) {
+            primerImporte.value = totalVentaInput.value;
+        }
+
+    }
+
+    sincronizarImporte();
+        
+    // Función para agregar una fila de forma de pago
+function agregarFilaPago() {
+    const newRow = document.createElement("div");
+    newRow.classList.add("row", "mb-3");
+
+    // Obtener opciones de los elementos ocultos
+    const tiposPago = document.querySelectorAll('#tiposFormaPagoData option');
+    const formasPago = document.querySelectorAll('#formasDePagoData option');
+
+    // Crear los select dinámicamente
+    const tiposPagoOptions = Array.from(tiposPago).map(option => 
+        `<option value="${option.value}">${option.text}</option>`
+    ).join('');
+
+    const formasPagoOptions = Array.from(formasPago).map(option => 
+        `<option value="${option.value}">${option.text}</option>`
+    ).join('');
+
+    newRow.innerHTML = `
+        <div class="col-md-3">
+            <select class="form-control tipoFormaPago">
+                <option value="">Seleccionar Tipo de Pago</option>
+                ${tiposPagoOptions}  <!-- Usando opciones generadas dinámicamente -->
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-control formaDePago">
+                <option value="">Seleccionar Forma de Pago</option>
+                ${formasPagoOptions}  <!-- Usando opciones generadas dinámicamente -->
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control importe-input" placeholder="Importe" step="0.01" min="0">
+        </div>
+    `;
+
+    document.getElementById("formularioPago").appendChild(newRow);
+
+    // Añadir event listener al nuevo campo importe usando blur
+    const importeInput = newRow.querySelector(".importe-input");
+    importeInput.addEventListener("blur", validarTotalPago);
+}
+
+// Función para validar si el total de pagos alcanza el total de venta
+function validarTotalPago() {
+    const importeInputs = document.querySelectorAll(".importe-input");
+    let totalPagado = 0;
+
+    importeInputs.forEach(input => {
+        totalPagado += parseFloat(input.value) || 0;
+    });
+
+    // Si el total pagado alcanza el total de la venta, evitar agregar más filas
+    if (totalPagado >= parseFloat(totalVentaInput.value)) {
+        if (totalPagado > parseFloat(totalVentaInput.value)) {
+            alert("El total de los importes no puede exceder el total de la venta.");
+            this.value = ""; // Limpia el último valor ingresado si excede el total
+        }
+        return; // Evita agregar filas adicionales
+    }
+
+    // Solo agregar fila si el total pagado es menor al total de la venta
+    if (totalPagado < parseFloat(totalVentaInput.value)) {
+        agregarFilaPago();
+    }
+}
+
+// Añadir listener al primer campo de importe al iniciar, usando blur
+const primerImporteInput = formularioPago.querySelector(".importe-input");
+if (primerImporteInput) {
+    primerImporteInput.addEventListener("blur", validarTotalPago);
+}
+
+
+
     let barcodeInput = "";
     let barcodeTimer;
 
@@ -92,6 +180,9 @@ document.addEventListener("DOMContentLoaded", function () {
             totalVenta += parseFloat(input.value) || 0;
         });
         totalVentaInput.value = totalVenta.toFixed(2); // Mostrar el total con 2 decimales
+        
+        // Llamamos a sincronizarImporte aquí para asegurar la actualización
+        sincronizarImporte()
     }
 
     // Función para verificar si una fila está completa y cambiar el botón a "-"
@@ -256,4 +347,5 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault(); // Prevenir el envío por defecto del formulario
         enviarDatos(); // Llamar a la función para enviar los datos
     });
+    
 });

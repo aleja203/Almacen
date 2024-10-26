@@ -90,6 +90,50 @@
                 </div>
             </div>
 
+<div id="formularioPago">
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <select id="tipoFormaPago" class="form-control">
+                <option value="">Seleccionar Tipo de Pago</option>
+                <option th:each="tipo : ${tiposFormaPago}"
+                        th:value="${tipo}" 
+                        th:text="${tipo}">
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-3">
+            <select id="formaDePago" class="form-control">
+                <option value="">Seleccionar la forma de pago</option>
+                <option th:each="forma : ${formasDePago}"
+                        th:value="${forma}" 
+                        th:text="${forma}">
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <input type="number" class="form-control importe-input" name="importe" 
+                   placeholder="Importe" 
+                   step="0.01" min="0">
+        </div>
+    </div>
+
+    <!-- Elementos ocultos para datos adicionales (si son necesarios) -->
+    <select id="tiposFormaPagoData" style="display:none;">
+        <option th:each="tipo : ${tiposFormaPago}"
+                th:value="${tipo}" 
+                th:text="${tipo}"></option>
+    </select>
+
+    <select id="formasDePagoData" style="display:none;">
+        <option th:each="forma : ${formasDePago}"
+                th:value="${forma}" 
+                th:text="${forma}"></option>
+    </select>
+</div>
+
+
             <!-- Botón de envío -->
             <div class="row mb-3">
                 <div class="col-md-12">

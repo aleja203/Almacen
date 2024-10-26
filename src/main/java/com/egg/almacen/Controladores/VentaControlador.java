@@ -4,26 +4,26 @@ package com.egg.almacen.Controladores;
 import com.egg.almacen.DTO.VentaDTO;
 import com.egg.almacen.Entidades.Cliente;
 import com.egg.almacen.Entidades.DetalleVenta;
+import com.egg.almacen.Entidades.FormaDePago;
 import com.egg.almacen.Entidades.Producto;
 import com.egg.almacen.Entidades.Venta;
+import com.egg.almacen.Enumeraciones.TipoFormaPago;
 import com.egg.almacen.Excepciones.MiException;
 import com.egg.almacen.Servicios.ClienteServicio;
+import com.egg.almacen.Servicios.FormaDePagoServicio;
 import com.egg.almacen.Servicios.ProductoServicio;
 import com.egg.almacen.Servicios.VentaServicio;
 import java.util.HashMap;
 //import com.egg.almacen.Servicios.VentaServicio;
 import java.util.List;
 import java.util.Map;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,14 +41,19 @@ public class VentaControlador {
     private ClienteServicio clienteServicio;
     @Autowired
     private VentaServicio ventaServicio;
+    @Autowired
+    private FormaDePagoServicio formaDePagoServicio;
    
     @GetMapping("/registrar")
     public String registrar(ModelMap modelo){
         
         List<Producto> productos = productoServicio.listarProductos();
         List<Cliente> clientes = clienteServicio.listarClientes();
+        List<FormaDePago> formasDePago = formaDePagoServicio.listarFormasDePago();
         modelo.addAttribute("productos", productos);
         modelo.addAttribute("clientes", clientes);
+        modelo.addAttribute("tiposFormaPago", TipoFormaPago.values());
+        modelo.addAttribute("formasDePago", formasDePago);
         
                 
         return "venta_form.html";
