@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function () {
     const ventaForm = document.getElementById("ventaForm");
     const formularioVenta = document.getElementById("formularioVenta");
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     sincronizarImporte();
         
     // Función para agregar una fila de forma de pago
+// Función para agregar una fila de forma de pago
 function agregarFilaPago() {
     const newRow = document.createElement("div");
     newRow.classList.add("row", "mb-3");
@@ -23,15 +25,21 @@ function agregarFilaPago() {
     // Obtener opciones de los elementos ocultos
     const tiposPago = document.querySelectorAll('#tiposFormaPagoData option');
     const formasPago = document.querySelectorAll('#formasDePagoData option');
+    
+    document.querySelectorAll('#formasDePagoData option').forEach(opt => {
+    console.log(opt.value, opt.dataset.tipo);
+});
 
     // Crear los select dinámicamente
-    const tiposPagoOptions = Array.from(tiposPago).map(option => 
+    const tiposPagoOptions = Array.from(tiposPago).map(option =>
         `<option value="${option.value}">${option.text}</option>`
     ).join('');
 
-    const formasPagoOptions = Array.from(formasPago).map(option => 
-        `<option value="${option.value}">${option.text}</option>`
+    const formasPagoOptions = Array.from(formasPago).map(option =>
+        `<option value="${option.value}" data-tipo="${option.dataset.tipo}">${option.text}</option>`
     ).join('');
+    
+    console.log("formasPagoOptions:", formasPagoOptions);
 
     newRow.innerHTML = `
         <div class="col-md-3">
@@ -43,20 +51,42 @@ function agregarFilaPago() {
         <div class="col-md-3">
             <select class="form-control formaDePago">
                 <option value="">Seleccionar Forma de Pago</option>
-                ${formasPagoOptions}  <!-- Usando opciones generadas dinámicamente -->
+                ${formasPagoOptions}  <!-- Opciones generadas dinámicamente de formas de pago -->
             </select>
         </div>
         <div class="col-md-2">
-            <input type="number" class="form-control importe-input" placeholder="Importe" step="0.01" min="0">
+            <input type="number" class="form-control importe-input" name="importe"
+            placeholder="Importe" step="0.01" min="0">
         </div>
     `;
 
-    document.getElementById("formularioPago").appendChild(newRow);
+    // Añadir la nueva fila al contenedor de formulario de pago
+    const formularioPago = document.getElementById("formularioPago");
+    formularioPago.appendChild(newRow);
+
+    // Añadir event listeners a los selects
+    const tipoFormaPagoSelect = newRow.querySelector(".tipoFormaPago");
+    const formaDePagoSelect = newRow.querySelector(".formaDePago");
+
+    tipoFormaPagoSelect.addEventListener("change", function () {
+        actualizarFormasPago(tipoFormaPagoSelect, formaDePagoSelect);
+    });
 
     // Añadir event listener al nuevo campo importe usando blur
     const importeInput = newRow.querySelector(".importe-input");
     importeInput.addEventListener("blur", validarTotalPago);
 }
+
+function actualizarFormasPago(tipoFormaPagoSelect, formaDePagoSelect) {
+    const selectedTipo = tipoFormaPagoSelect.value;
+
+    // Filtrar y mostrar solo las formas de pago correspondientes al tipo seleccionado
+    Array.from(formaDePagoSelect.options).forEach(option => {
+        option.hidden = option.getAttribute('data-tipo') !== selectedTipo && option.value !== "";
+    });
+    formaDePagoSelect.value = ""; // Restablecer la selección de forma de pago
+}
+
 
 // Función para validar si el total de pagos alcanza el total de venta
 function validarTotalPago() {
@@ -348,4 +378,38 @@ if (primerImporteInput) {
         enviarDatos(); // Llamar a la función para enviar los datos
     });
     
+    
+    const tipoFormaPagoSelect = document.getElementById('tipoFormaPago');
+    const formaDePagoSelect = document.getElementById('formaDePago');
+//    const formasDePagoData = document.getElementById('formasDePagoData');
+
+// Guardar todas las opciones de forma de pago al cargar la página
+const todasLasOpcionesFormasPago = Array.from(formaDePagoSelect.querySelectorAll('option'));
+
+    // Evento para actualizar las formas de pago cuando se selecciona un tipo
+    tipoFormaPagoSelect.addEventListener('change', function () {
+        const tipoSeleccionado = this.value;
+
+        // Limpiar el select de formas de pago
+        formaDePagoSelect.innerHTML = '<option value="">Seleccionar la forma de pago</option>';
+
+       if (tipoSeleccionado) {
+        // Filtrar y mostrar las opciones que coincidan con el tipo seleccionado
+        const formasFiltradas = todasLasOpcionesFormasPago.filter(forma => {
+            return forma.getAttribute('data-tipo') === tipoSeleccionado;
+        });
+
+        // Agregar las opciones filtradas al select de formaDePago
+        formasFiltradas.forEach(forma => {
+            formaDePagoSelect.appendChild(forma);
+        });
+    } else {
+        // Si no hay tipo seleccionado, mostrar todas las opciones
+        todasLasOpcionesFormasPago.forEach(forma => {
+        formaDePagoSelect.appendChild(forma);
+        });
+    }
 });
+    
+});
+

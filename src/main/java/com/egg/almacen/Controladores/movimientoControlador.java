@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/movimiento")
-public class movimientoControlador {
+public class MovimientoControlador {
 
     @Autowired
     private MovimientoServicio movimientoServicio;

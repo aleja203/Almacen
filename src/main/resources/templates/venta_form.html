@@ -106,8 +106,9 @@
             <select id="formaDePago" class="form-control">
                 <option value="">Seleccionar la forma de pago</option>
                 <option th:each="forma : ${formasDePago}"
-                        th:value="${forma}" 
-                        th:text="${forma}">
+                        th:value="${forma.id}" 
+                        th:text="${forma.descripcion}"
+                        th:attr="data-tipo=${forma.tipo}">
                 </option>
             </select>
         </div>
@@ -127,10 +128,12 @@
     </select>
 
     <select id="formasDePagoData" style="display:none;">
-        <option th:each="forma : ${formasDePago}"
-                th:value="${forma}" 
-                th:text="${forma}"></option>
-    </select>
+                <option th:each="forma : ${formasDePago}"
+                        th:value="${forma.id}" 
+                        th:text="${forma.descripcion}"
+                        th:attr="data-tipo=${forma.tipo}"> <!-- Asegúrate de que cada forma de pago tenga un tipo -->
+    </option>
+</select>
 </div>
 
 
