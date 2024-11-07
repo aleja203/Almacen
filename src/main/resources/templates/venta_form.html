@@ -27,101 +27,100 @@
     </div>
   
 <div class="container-fluid">
-        <form id="ventaForm" method="POST">
-
+    <form id="ventaForm" method="POST">
+        <div class="col-md-6">
+            <label for="clienteSelect" class="mb-2">Cliente</label>
+            <select name="cliente" id="clienteSelect" class="form-control">
+                <option value="">Seleccionar Cliente</option>
+                <option th:each="cliente : ${clientes}"
+                        th:value="${cliente.dni}"
+                        th:text="${cliente.nombre}">
+                </option>
+            </select>
+        </div>
+        <br>
+        <div id="formularioVenta">
+            <!-- Primera fila -->
+            <div class="row align-items-end">
+                <div class="col-md-2">
+                    <label for="codigo" class="mb-2">Código</label>
+                    <input type="text" class="form-control codigo-input" name="codigo" readonly>
+                </div>
+                <div class="col-md-3">
+                    <label for="productoSelect" class="mb-2">Producto</label>
+                    <select class="form-control producto-select">
+                        <option value="">Seleccionar Producto</option>
+                        <option th:each="producto : ${productos}"
+                                th:value="${producto.codigo}"
+                                th:text="${producto.descripcion}"
+                                th:data-precioVenta="${producto.precioVenta}">
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="cantidad" class="mb-2">Cantidad</label>
+                    <!--<input type="number" class="form-control cantidad-input" name="cantidad" value="1">-->
+                    <input type="number" class="form-control cantidad-input" name="cantidad" value="1" step="0.01" min="0">
+                </div>
+                <div class="col-md-2">
+                    <label for="precioVenta" class="mb-2">Precio</label>
+                    <input type="number" class="form-control precio-input" name="precioVenta" readonly>
+                </div>
+                <!-- Columna Total -->
+                <div class="col-md-2">
+                    <label for="total" class="mb-2">Total</label>
+                    <input type="number" class="form-control total-input" name="total">
+                </div>
+                <div class="col-md-1">
+                    <button type="button" id="agregarFila" class="btn btn-primary btn-icon">+</button>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3">
             <div class="col-md-6">
-                <label for="clienteSelect" class="mb-2">Cliente</label>
-                <select name="cliente" id="clienteSelect" class="form-control">
-                    <option value="">Seleccionar Cliente</option>
-                    <option th:each="cliente : ${clientes}"
-                            th:value="${cliente.dni}"
-                            th:text="${cliente.nombre}">
-                    </option>
-                </select>
+                <label for="observaciones" class="mb-2">Observaciones</label>
+                <input type="text" class="form-control" id="observaciones" name="observaciones" oninput="this.value = this.value.toUpperCase();">
             </div>
-            <br>
-            <div id="formularioVenta">
-                <!-- Primera fila -->
-                <div class="row align-items-end">
-                    <div class="col-md-2">
-                        <label for="codigo" class="mb-2">Código</label>
-                        <input type="text" class="form-control codigo-input" name="codigo" readonly>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="productoSelect" class="mb-2">Producto</label>
-                        <select class="form-control producto-select">
-                            <option value="">Seleccionar Producto</option>
-                            <option th:each="producto : ${productos}"
-                                    th:value="${producto.codigo}"
-                                    th:text="${producto.descripcion}"
-                                    th:data-precioVenta="${producto.precioVenta}">
-                            </option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label for="cantidad" class="mb-2">Cantidad</label>
-                        <!--<input type="number" class="form-control cantidad-input" name="cantidad" value="1">-->
-                        <input type="number" class="form-control cantidad-input" name="cantidad" value="1" step="0.01" min="0">
-                    </div>
-                    <div class="col-md-2">
-                        <label for="precioVenta" class="mb-2">Precio</label>
-                        <input type="number" class="form-control precio-input" name="precioVenta" readonly>
-                    </div>
-                    <!-- Columna Total -->
-                    <div class="col-md-2">
-                        <label for="total" class="mb-2">Total</label>
-                        <input type="number" class="form-control total-input" name="total">
-                    </div>
-                    <div class="col-md-1">
-                        <button type="button" id="agregarFila" class="btn btn-primary btn-icon">+</button>
-                    </div>
-                </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="totalVenta" class="mb-2">Total de la Venta</label>
+                <input type="number" class="form-control" id="totalVenta" name="totalVenta"readonly>
             </div>
+        </div>
+
+        <div id="formularioPago">
             <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="observaciones" class="mb-2">Observaciones</label>
-                    <input type="text" class="form-control" id="observaciones" name="observaciones" oninput="this.value = this.value.toUpperCase();">
+                <div class="col-md-3">
+                    <select id="tipoFormaPago" class="form-control tipoFormaPago">
+                        <option value="">Seleccionar Tipo de Pago</option>
+                        <option th:each="tipo : ${tiposFormaPago}"
+                                th:value="${tipo}" 
+                                th:text="${tipo}">
+                        </option>
+                    </select>
                 </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="totalVenta" class="mb-2">Total de la Venta</label>
-                    <input type="number" class="form-control" id="totalVenta" name="totalVenta"readonly>
+
+                <div class="col-md-3">
+                    <select id="formaDePago" class="form-control formaDePago">
+                        <option value="">Seleccionar la forma de pago</option>
+                        <option th:each="forma : ${formasDePago}"
+                                th:value="${forma.id}" 
+                                th:text="${forma.descripcion}"
+                                th:attr="data-tipo=${forma.tipo}">
+                        </option>
+                    </select>
                 </div>
+
+                    <div class="col-md-2">
+                        <input type="number" class="form-control importe-input" name="importe" 
+                               placeholder="Importe" 
+                               step="0.01" min="0">
+                    </div>
             </div>
 
-<div id="formularioPago">
-    <div class="row mb-3">
-        <div class="col-md-3">
-            <select id="tipoFormaPago" class="form-control">
-                <option value="">Seleccionar Tipo de Pago</option>
-                <option th:each="tipo : ${tiposFormaPago}"
-                        th:value="${tipo}" 
-                        th:text="${tipo}">
-                </option>
-            </select>
-        </div>
-
-        <div class="col-md-3">
-            <select id="formaDePago" class="form-control">
-                <option value="">Seleccionar la forma de pago</option>
-                <option th:each="forma : ${formasDePago}"
-                        th:value="${forma.id}" 
-                        th:text="${forma.descripcion}"
-                        th:attr="data-tipo=${forma.tipo}">
-                </option>
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <input type="number" class="form-control importe-input" name="importe" 
-                   placeholder="Importe" 
-                   step="0.01" min="0">
-        </div>
-    </div>
-
-    <!-- Elementos ocultos para datos adicionales (si son necesarios) -->
-    <select id="tiposFormaPagoData" style="display:none;">
+            
+            <select id="tiposFormaPagoData" style="display:none;">
         <option th:each="tipo : ${tiposFormaPago}"
                 th:value="${tipo}" 
                 th:text="${tipo}"></option>
@@ -134,16 +133,17 @@
                         th:attr="data-tipo=${forma.tipo}"> <!-- Asegúrate de que cada forma de pago tenga un tipo -->
     </option>
 </select>
-</div>
+            
+        </div>
 
 
-            <!-- Botón de envío -->
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <button type="submit" id="submitVenta" class="btn btn-primary">Guardar</button>
-                </div>
+        <!-- Botón de envío -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <button type="submit" id="submitVenta" class="btn btn-primary">Guardar</button>
             </div>
-        </form>
+        </div>
+    </form>
     </div>
 
 <section class="text-center container">

@@ -40,6 +40,9 @@ public class Venta {
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DetalleVenta> detalles;
     
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<FormaPagoVenta> formasPago;
+    
     private Double totalVenta;
     
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -104,5 +107,14 @@ public class Venta {
         this.formasDePago = formasDePago;
     }
 
+    public Set<FormaPagoVenta> getFormasPago() {
+        return formasPago;
+    }
+
+    public void setFormasPago(Set<FormaPagoVenta> formasPago) {
+        this.formasPago = formasPago;
+    }
+
    
+    
 }

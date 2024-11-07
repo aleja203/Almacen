@@ -84,6 +84,25 @@ public class VentaControlador {
 
         return "ventaDetalle_list";
     }
+
+    @GetMapping("/listaFormaPago")
+    public String listarVentasFormaPago(Model model) {
+        List<Map<String, Object>> ventas = ventaServicio.listarFormaPago();
+        List<FormaDePago> formasDePago = formaDePagoServicio.listarFormasDePago();
+        List<Cliente> clientes = clienteServicio.listarClientes();
+        
+
+        
+    
+
+        
+        model.addAttribute("ventas", ventas);
+        model.addAttribute("formasDePago", formasDePago);
+        model.addAttribute("tiposFormaPago", TipoFormaPago.values());
+        model.addAttribute("clientes", clientes);
+
+        return "ventaFormaPago_list";
+    }
     
     @GetMapping("/listaVenta")
     public String listarVentas(Model model) {

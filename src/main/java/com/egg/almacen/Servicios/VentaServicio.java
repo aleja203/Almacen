@@ -2,16 +2,18 @@
 package com.egg.almacen.Servicios;
 
 
-import com.egg.almacen.DTO.DetalleVentaDTO;
 import com.egg.almacen.DTO.VentaDTO;
 import com.egg.almacen.Entidades.Cliente;
 import com.egg.almacen.Entidades.DetalleVenta;
+import com.egg.almacen.Entidades.FormaDePago;
+import com.egg.almacen.Entidades.FormaPagoVenta;
 import com.egg.almacen.Entidades.Movimiento;
 import com.egg.almacen.Entidades.Venta;
 import com.egg.almacen.Entidades.Producto;
 import com.egg.almacen.Excepciones.MiException;
 import com.egg.almacen.Repositorios.ClienteRepositorio;
 import com.egg.almacen.Repositorios.DetalleVentaRepositorio;
+import com.egg.almacen.Repositorios.FormaDePagoRepositorio;
 import com.egg.almacen.Repositorios.MovimientoRepositorio;
 import com.egg.almacen.Repositorios.ProductoRepositorio;
 import com.egg.almacen.Repositorios.VentaRepositorio;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -43,9 +46,11 @@ public class VentaServicio {
     private MovimientoRepositorio movimientoRepositorio;
     @Autowired
     private ClienteRepositorio clienteRepositorio;
+        @Autowired
+    private FormaDePagoRepositorio formaDePagoRepositorio;
 
-    @Transactional
-    public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
+@Transactional
+public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
     Map<String, Object> response = new HashMap<>();
 
     try {
@@ -114,10 +119,38 @@ public class VentaServicio {
 
         venta.setDetalles(detalles);
 
+        // Manejar las formas de pago
+        Set<FormaPagoVenta> formasPago = ventaDTO.getFormasPago().stream()
+                .map(formaPagoDTO -> {
+                    FormaPagoVenta formaPagoVenta = new FormaPagoVenta();
+
+                    System.out.println("Tipo en formaPagoDTO: " + formaPagoDTO.getTipoPago());
+                    System.out.println("FormaPago en formaPagoDTO: " + formaPagoDTO.getFormaDePago());
+
+                    formaPagoVenta.setTipoPago(formaPagoDTO.getTipoPago());
+
+                    // Verificar si el id de FormaDePago no es nulo antes de buscar en la base de datos
+                    if (formaPagoDTO.getFormaDePago() == null) {
+                        throw new IllegalArgumentException("FormaDePagoId no puede ser null para tipo de pago " + formaPagoDTO.getTipoPago());
+                    }
+
+                    // Obtener FormaDePago desde la base de datos
+                    FormaDePago formaDePago = formaDePagoRepositorio.findById(formaPagoDTO.getFormaDePago())
+                            .orElseThrow(() -> new EntityNotFoundException("FormaDePago no encontrada con id: " + formaPagoDTO.getFormaDePago()));
+
+                    formaPagoVenta.setFormaDePago(formaDePago); // Asignar la forma de pago persistente a formaPagoVenta
+                    formaPagoVenta.setImporte(formaPagoDTO.getImporte());
+                    formaPagoVenta.setVenta(venta); // Establecer la relación con la venta
+                    return formaPagoVenta;
+                })
+                .collect(Collectors.toSet());
+
+        venta.setFormasPago(formasPago); // Asignar las formas de pago a la venta
+
+        
+
         // Guardar la entidad Venta en la base de datos
-        // La venta se guarda ya dentro del bucle para asegurarnos de tener el ID antes de crear el movimiento
-        // Esto se puede simplificar al guardar solo al final, pero asegurate de que el ID esté disponible
-        // ventaRepositorio.save(venta);
+        ventaRepositorio.save(venta);
 
         // Devolver un mensaje de éxito
         response.put("message", "Venta registrada exitosamente.");
@@ -132,6 +165,7 @@ public class VentaServicio {
         return response;
     }
 }
+
 
     
     public List<Map<String, Object>> listarDetalle() {
@@ -168,6 +202,50 @@ public class VentaServicio {
     return resultado;
 }
 
+    public List<Map<String, Object>> listarFormaPago() {
+    // Obtener la lista de ventas desde el repositorio
+    List<Venta> ventas = ventaRepositorio.listarConFormasPago();
+    
+    // Imprimir la cantidad de ventas obtenidas
+    System.out.println("Total de ventas obtenidas: " + ventas.size());
+
+    // Inicializar la lista para almacenar los resultados
+    List<Map<String, Object>> resultado = new ArrayList<>();
+    Set<Long> ventasProcesadas = new HashSet<>(); // Set para almacenar los IDs de ventas ya procesadas
+
+    for (Venta venta : ventas) {
+        // Si el ID de la venta ya fue procesado, no volvemos a agregarla
+        if (ventasProcesadas.contains(venta.getId())) {
+            continue;  // Pasamos a la siguiente venta
+        }
+
+        // Imprimir detalles de la venta
+        System.out.println("Procesando venta ID: " + venta.getId() + ", Fecha: " + venta.getFecha() + ", Cliente: " + venta.getCliente().getNombre());
+
+        for (FormaPagoVenta formaPago : venta.getFormasPago()) {
+            Map<String, Object> datosVenta = new HashMap<>();
+            datosVenta.put("id", venta.getId());
+            datosVenta.put("fecha", venta.getFecha());
+            datosVenta.put("cliente", venta.getCliente().getNombre());  // Mostramos el cliente en cada fila
+            datosVenta.put("clienteDni", venta.getCliente().getDni());
+            datosVenta.put("formaPago", formaPago.getFormaDePago().getDescripcion());
+            datosVenta.put("tipoPago", formaPago.getTipoPago());
+            datosVenta.put("importe", formaPago.getImporte());
+
+            // Imprimir detalles de la forma de pago
+            System.out.println("  Forma de Pago: " + formaPago.getFormaDePago() + ", Tipo: " + formaPago.getTipoPago() + ", Importe: " + formaPago.getImporte() + ", Id de la forma de pago: " + formaPago.getId());
+
+            resultado.add(datosVenta);
+        }
+
+        // Agregamos el ID de la venta a la lista de ventas procesadas
+        ventasProcesadas.add(venta.getId());
+    }
+
+    return resultado;
+}
+
+    
     @Transactional
     public Map<String, Object> eliminarVenta(Long ventaId) throws MiException {
         Map<String, Object> response = new HashMap<>();

@@ -10,7 +10,11 @@ function convertirFecha(fechaStr) {
 
 function aplicarFiltros() {
     var dniCliente = document.getElementById('clienteSelect').value; // Obtener el id del cliente seleccionado
-    var codigoProducto = document.getElementById('productoSelect').value; // Obtener el código del producto seleccionado
+
+    var tipoPago = document.getElementById('tipoPago').value;
+    var formaPago = document.getElementById('formaPago').value;
+    console.log("Valor de formaPago:", formaPago);
+    
     var fechaDesde = document.getElementById('fechaDesde').value; // Obtener la fecha desde seleccionada
     var fechaHasta = document.getElementById('fechaHasta').value; // Obtener la fecha hasta seleccionada
 
@@ -23,13 +27,21 @@ function aplicarFiltros() {
 
     rows.forEach(row => {
         var clienteDni = row.getAttribute('data-dni'); // Obtener el id del cliente en esa fila
-        var productoCodigo = row.getAttribute('data-producto'); // Obtener el código del producto en esa fila
+
+        var rowTipoPago = row.getAttribute("data-tipoPago");
+        var rowFormaPago = row.getAttribute("data-formaPago");
+        console.log("Valor de rowFormaPago:", rowFormaPago);
+
         var fechaVentaStr = row.cells[0].innerText; // Obtener la fecha de la compra en esa fila (suponiendo que la fecha está en la primera columna)
         var fechaVenta = convertirFecha(fechaVentaStr); // Convertir la fecha de la fila a un objeto Date
 
         // Mostrar la fila si el id del proveedor coincide, el código del producto coincide, o si no se ha seleccionado ningún proveedor/producto
         var clienteCoincide = (dniCliente === "" || dniCliente === clienteDni);
-        var productoCoincide = (codigoProducto === "" || codigoProducto === productoCodigo);
+        var tipoPagoCoincide = (tipoPago === "" || tipoPago === rowTipoPago);
+        
+        // Modificación: comparando el valor de formaPago con los valores de la fila usando trim() y toLowerCase()
+        var formaPagoCoincide = (formaPago === "" || rowFormaPago.trim().toLowerCase() === formaPago.trim().toLowerCase());
+        
         var fechaCoincide = true; // Por defecto, las filas coinciden si no se han seleccionado fechas
 
         // Si se selecciona una fecha desde, comprobar que la fecha de la compra sea mayor o igual
@@ -42,7 +54,7 @@ function aplicarFiltros() {
         }
 
         // Mostrar u ocultar la fila según todos los filtros
-        if (clienteCoincide && productoCoincide && fechaCoincide) {
+        if (clienteCoincide && tipoPagoCoincide && formaPagoCoincide && fechaCoincide) {
             row.style.display = ""; // Mostrar la fila
         } else {
             row.style.display = "none"; // Ocultar la fila
@@ -52,6 +64,7 @@ function aplicarFiltros() {
 
 // Escuchar los cambios en los selectores de cliente, producto y fechas
 document.getElementById('clienteSelect').addEventListener('change', aplicarFiltros);
-document.getElementById('productoSelect').addEventListener('change', aplicarFiltros);
+document.getElementById('tipoPago').addEventListener('change', aplicarFiltros);
+document.getElementById('formaPago').addEventListener('change', aplicarFiltros);
 document.getElementById('fechaDesde').addEventListener('change', aplicarFiltros);
 document.getElementById('fechaHasta').addEventListener('change', aplicarFiltros);

@@ -10,6 +10,7 @@ public class VentaDTO {
     private String observaciones;
     private double totalVenta;
     private Set<DetalleVentaDTO> detalles;
+    private Set<FormaPagoVentaDTO> formasPago;
 
     public VentaDTO() {
     }
@@ -41,6 +42,16 @@ public class VentaDTO {
     public Set<DetalleVentaDTO> getDetalles() {
         return detalles;
     }
+
+    public Set<FormaPagoVentaDTO> getFormasPago() {
+        return formasPago;
+    }
+
+    public void setFormasPago(Set<FormaPagoVentaDTO> formasPago) {
+        this.formasPago = formasPago;
+    }
+    
+    
 
     public void setDetalles(Set<DetalleVentaDTO> detalles) {
         this.detalles = detalles;

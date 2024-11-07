@@ -53,6 +53,11 @@ public class FormaDePago {
         this.descripcion = descripcion;
     }
     
-    
+    public static FormaDePago fromId(Long id) {
+    FormaDePago formaDePago = new FormaDePago();
+    formaDePago.setId(id);
+    // Aquí podrías agregar lógica para obtener más detalles, por ejemplo, consultando la base de datos.
+    return formaDePago;
+}
     
 }

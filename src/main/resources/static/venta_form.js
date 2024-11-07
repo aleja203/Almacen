@@ -119,7 +119,6 @@ if (primerImporteInput) {
 }
 
 
-
     let barcodeInput = "";
     let barcodeTimer;
 
@@ -327,13 +326,15 @@ if (primerImporteInput) {
         const formData = new FormData(ventaForm);
 
         const venta = {
-            id: parseInt(formData.get("ventaId"), 10),  // Convertir el ID de String a Long
+            id: parseInt(formData.get("ventaId"), 10), // Convertir el ID de String a Long
             clienteId: parseInt(formData.get("cliente"), 10), // Convertir clienteId a Long
             observaciones: formData.get("observaciones"),
             totalVenta: parseFloat(formData.get("totalVenta")),
-            detalles: []
+            detalles: [],
+            formasPago: []
         };
 
+// Recorrer las filas del formulario de venta
         formularioVenta.querySelectorAll(".row").forEach(row => {
             const codigo = row.querySelector('.codigo-input').value;
             const producto = row.querySelector('.producto-select').value;
@@ -341,6 +342,7 @@ if (primerImporteInput) {
             const precioVenta = parseFloat(row.querySelector('.precio-input').value);
             const total = parseFloat(row.querySelector('.total-input').value);
 
+            // Agregar detalle solo si todos los campos están completos
             if (codigo && producto && cantidad && precioVenta && total) {
                 venta.detalles.push({
                     producto: codigo,
@@ -350,6 +352,23 @@ if (primerImporteInput) {
                 });
             }
         });
+
+// Recorrer las filas del formulario de pago
+        formularioPago.querySelectorAll(".row").forEach(row => {
+            const tipoPago = row.querySelector('.tipoFormaPago').value;
+            const formaDePago = row.querySelector('.formaDePago').value;
+            const importe = parseFloat(row.querySelector('.importe-input').value); // Convierte importe a número decimal
+
+            // Agregar forma de pago solo si todos los campos están completos
+            if (tipoPago && formaDePago && importe) {
+                venta.formasPago.push({
+                    tipoPago: tipoPago,
+                    formaDePago: formaDePago,
+                    importe: importe
+                });
+            }
+        });
+
 
         console.log("Venta:", venta);
 
