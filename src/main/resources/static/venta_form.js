@@ -16,32 +16,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sincronizarImporte();
         
-    // Función para agregar una fila de forma de pago
 // Función para agregar una fila de forma de pago
-function agregarFilaPago() {
-    const newRow = document.createElement("div");
-    newRow.classList.add("row", "mb-3");
+    function agregarFilaPago() {
+        // Obtener los selects existentes
+        const tipoFormaPagoSelects = document.querySelectorAll(".tipoFormaPago");
+        const formaDePagoSelects = document.querySelectorAll(".formaDePago");
 
-    // Obtener opciones de los elementos ocultos
-    const tiposPago = document.querySelectorAll('#tiposFormaPagoData option');
-    const formasPago = document.querySelectorAll('#formasDePagoData option');
-    
-    document.querySelectorAll('#formasDePagoData option').forEach(opt => {
-    console.log(opt.value, opt.dataset.tipo);
-});
+        // Verificar si todos los campos "tipo" y "forma de pago" están completos
+        for (let i = 0; i < tipoFormaPagoSelects.length; i++) {
+            const tipoFormaPago = tipoFormaPagoSelects[i].value;
+            const formaDePago = formaDePagoSelects[i].value;
 
-    // Crear los select dinámicamente
-    const tiposPagoOptions = Array.from(tiposPago).map(option =>
-        `<option value="${option.value}">${option.text}</option>`
-    ).join('');
+            if (!tipoFormaPago || !formaDePago) {
+                alert("Por favor, complete todos los campos de tipo y forma de pago antes de agregar una nueva fila.");
+                return; // No se agrega la fila si no están completos
+            }
+        }
 
-    const formasPagoOptions = Array.from(formasPago).map(option =>
-        `<option value="${option.value}" data-tipo="${option.dataset.tipo}">${option.text}</option>`
-    ).join('');
-    
-    console.log("formasPagoOptions:", formasPagoOptions);
+        const newRow = document.createElement("div");
+        newRow.classList.add("row", "mb-3");
 
-    newRow.innerHTML = `
+        // Obtener opciones de los elementos ocultos
+        const tiposPago = document.querySelectorAll('#tiposFormaPagoData option');
+        const formasPago = document.querySelectorAll('#formasDePagoData option');
+
+        document.querySelectorAll('#formasDePagoData option').forEach(opt => {
+            console.log(opt.value, opt.dataset.tipo);
+        });
+
+        // Crear los select dinámicamente
+        const tiposPagoOptions = Array.from(tiposPago).map(option =>
+                `<option value="${option.value}">${option.text}</option>`
+        ).join('');
+
+        const formasPagoOptions = Array.from(formasPago).map(option =>
+                `<option value="${option.value}" data-tipo="${option.dataset.tipo}">${option.text}</option>`
+        ).join('');
+
+        console.log("formasPagoOptions:", formasPagoOptions);
+
+        newRow.innerHTML = `
         <div class="col-md-3">
             <select class="form-control tipoFormaPago">
                 <option value="">Seleccionar Tipo de Pago</option>
@@ -60,63 +74,63 @@ function agregarFilaPago() {
         </div>
     `;
 
-    // Añadir la nueva fila al contenedor de formulario de pago
-    const formularioPago = document.getElementById("formularioPago");
-    formularioPago.appendChild(newRow);
+        // Añadir la nueva fila al contenedor de formulario de pago
+        const formularioPago = document.getElementById("formularioPago");
+        formularioPago.appendChild(newRow);
 
-    // Añadir event listeners a los selects
-    const tipoFormaPagoSelect = newRow.querySelector(".tipoFormaPago");
-    const formaDePagoSelect = newRow.querySelector(".formaDePago");
+        // Añadir event listeners a los selects
+        const tipoFormaPagoSelect = newRow.querySelector(".tipoFormaPago");
+        const formaDePagoSelect = newRow.querySelector(".formaDePago");
 
-    tipoFormaPagoSelect.addEventListener("change", function () {
-        actualizarFormasPago(tipoFormaPagoSelect, formaDePagoSelect);
-    });
+        tipoFormaPagoSelect.addEventListener("change", function () {
+            actualizarFormasPago(tipoFormaPagoSelect, formaDePagoSelect);
+        });
 
-    // Añadir event listener al nuevo campo importe usando blur
-    const importeInput = newRow.querySelector(".importe-input");
-    importeInput.addEventListener("blur", validarTotalPago);
-}
+        // Añadir event listener al nuevo campo importe usando blur
+        const importeInput = newRow.querySelector(".importe-input");
+        importeInput.addEventListener("blur", validarTotalPago);
+    }
 
-function actualizarFormasPago(tipoFormaPagoSelect, formaDePagoSelect) {
-    const selectedTipo = tipoFormaPagoSelect.value;
+    function actualizarFormasPago(tipoFormaPagoSelect, formaDePagoSelect) {
+        const selectedTipo = tipoFormaPagoSelect.value;
 
-    // Filtrar y mostrar solo las formas de pago correspondientes al tipo seleccionado
-    Array.from(formaDePagoSelect.options).forEach(option => {
-        option.hidden = option.getAttribute('data-tipo') !== selectedTipo && option.value !== "";
-    });
-    formaDePagoSelect.value = ""; // Restablecer la selección de forma de pago
-}
+        // Filtrar y mostrar solo las formas de pago correspondientes al tipo seleccionado
+        Array.from(formaDePagoSelect.options).forEach(option => {
+            option.hidden = option.getAttribute('data-tipo') !== selectedTipo && option.value !== "";
+        });
+        formaDePagoSelect.value = ""; // Restablecer la selección de forma de pago
+    }
 
 
 // Función para validar si el total de pagos alcanza el total de venta
-function validarTotalPago() {
-    const importeInputs = document.querySelectorAll(".importe-input");
-    let totalPagado = 0;
+    function validarTotalPago() {
+        const importeInputs = document.querySelectorAll(".importe-input");
+        let totalPagado = 0;
 
-    importeInputs.forEach(input => {
-        totalPagado += parseFloat(input.value) || 0;
-    });
+        importeInputs.forEach(input => {
+            totalPagado += parseFloat(input.value) || 0;
+        });
 
-    // Si el total pagado alcanza el total de la venta, evitar agregar más filas
-    if (totalPagado >= parseFloat(totalVentaInput.value)) {
-        if (totalPagado > parseFloat(totalVentaInput.value)) {
-            alert("El total de los importes no puede exceder el total de la venta.");
-            this.value = ""; // Limpia el último valor ingresado si excede el total
+        // Si el total pagado alcanza el total de la venta, evitar agregar más filas
+        if (totalPagado >= parseFloat(totalVentaInput.value)) {
+            if (totalPagado > parseFloat(totalVentaInput.value)) {
+                alert("El total de los importes no puede exceder el total de la venta.");
+                this.value = ""; // Limpia el último valor ingresado si excede el total
+            }
+            return; // Evita agregar filas adicionales
         }
-        return; // Evita agregar filas adicionales
-    }
 
-    // Solo agregar fila si el total pagado es menor al total de la venta
-    if (totalPagado < parseFloat(totalVentaInput.value)) {
-        agregarFilaPago();
+        // Solo agregar fila si el total pagado es menor al total de la venta
+        if (totalPagado < parseFloat(totalVentaInput.value)) {
+            agregarFilaPago();
+        }
     }
-}
 
 // Añadir listener al primer campo de importe al iniciar, usando blur
-const primerImporteInput = formularioPago.querySelector(".importe-input");
-if (primerImporteInput) {
-    primerImporteInput.addEventListener("blur", validarTotalPago);
-}
+    const primerImporteInput = formularioPago.querySelector(".importe-input");
+    if (primerImporteInput) {
+        primerImporteInput.addEventListener("blur", validarTotalPago);
+    }
 
 
     let barcodeInput = "";
@@ -154,87 +168,97 @@ if (primerImporteInput) {
     }
 
     // Función para agregar una nueva fila al formulario
-    function agregarFila(hacerFoco = false) {
-        const newRow = document.createElement("div");
-        newRow.classList.add("row", "mt-3");
+function agregarFila(hacerFoco = false) {
+    // Obtener la última fila añadida para verificar si está completa
+    const ultimaFila = formularioVenta.lastElementChild;
 
-        newRow.innerHTML = `
-            <div class="col-md-2">
-                <input type="text" class="form-control codigo-input" name="codigo" placeholder="Código" readonly>
-            </div>
-            <div class="col-md-3">
-                <select class="form-control producto-select" name="producto">
-                    ${formularioVenta.querySelector('.producto-select').innerHTML}
-                </select>
-            </div>
-            <div class="col-md-2">
-                <input type="number" class="form-control cantidad-input" name="cantidad" value="1" step="0.01" min="0">
-            </div>
-            <div class="col-md-2">
-                <input type="number" class="form-control precio-input" name="precioVenta">
-            </div>
-            <div class="col-md-2">
-                <input type="number" class="form-control total-input" name="total" readonly>
-            </div>
-            <div class="col-md-1 d-flex align-items-end">
-                <button type="button" class="btn btn-primary mt-4 agregar-fila-btn">+</button>
-            </div>
-        `;
-
-        formularioVenta.appendChild(newRow);
-        const productoSelect = newRow.querySelector('.producto-select');
-        productoSelect.addEventListener("change", function () {
-            actualizarPrecio(newRow);
-        });
-
-        if (hacerFoco) {
-            newRow.querySelector('input[name="codigo"]').focus();
-        }
-
-        const agregarFilaBtn = newRow.querySelector('.agregar-fila-btn');
-        agregarFilaBtn.addEventListener("click", function (event) {
-            event.preventDefault(); // Prevenir el comportamiento por defecto del botón
-            if (agregarFilaBtn.classList.contains('btn-primary')) {
-                agregarFila(true);
-            } else {
-                eliminarFila(newRow);
-            }
-        });
+    // Si la última fila existe y no está completa, mostrar un mensaje y no agregar una nueva fila
+    if (ultimaFila && !filaCompleta(ultimaFila)) {
+        alert("Por favor, complete todos los campos de la fila actual antes de agregar una nueva.");
+        return;
     }
 
-    function actualizarTotalVenta() {
-        let totalVenta = 0;
-        const totalInputs = document.querySelectorAll('.total-input');
-        totalInputs.forEach(function (input) {
-            totalVenta += parseFloat(input.value) || 0;
-        });
-        totalVentaInput.value = totalVenta.toFixed(2); // Mostrar el total con 2 decimales
-        
-        // Llamamos a sincronizarImporte aquí para asegurar la actualización
-        sincronizarImporte()
+    const newRow = document.createElement("div");
+    newRow.classList.add("row", "mt-3");
+
+    newRow.innerHTML = `
+        <div class="col-md-2">
+            <input type="text" class="form-control codigo-input" name="codigo" placeholder="Código" readonly>
+        </div>
+        <div class="col-md-3">
+            <select class="form-control producto-select" name="producto">
+                ${formularioVenta.querySelector('.producto-select').innerHTML}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control cantidad-input" name="cantidad" value="1" step="0.01" min="0">
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control precio-input" name="precioVenta">
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control total-input" name="total" readonly>
+        </div>
+        <div class="col-md-1 d-flex align-items-end">
+            <button type="button" class="btn btn-primary mt-4 agregar-fila-btn">+</button>
+        </div>
+    `;
+
+    formularioVenta.appendChild(newRow);
+
+    const productoSelect = newRow.querySelector('.producto-select');
+    productoSelect.addEventListener("change", function () {
+        actualizarPrecio(newRow);
+    });
+
+    if (hacerFoco) {
+        newRow.querySelector('input[name="codigo"]').focus();
     }
 
-    // Función para verificar si una fila está completa y cambiar el botón a "-"
-    function verificarFilaCompleta(row) {
-        if (filaCompleta(row)) {
-            const boton = row.querySelector('.btn-primary');
-            console.log(boton);
-            boton.textContent = '-';
-            boton.classList.remove('btn-primary');
-            boton.classList.add('btn-danger');
-        }
-    }
+    const agregarFilaBtn = newRow.querySelector('.agregar-fila-btn');
+    agregarFilaBtn.addEventListener("click", function (event) {
+        event.preventDefault(); // Prevenir el comportamiento por defecto del botón
 
-    // Función para verificar si una fila está completa
-    function filaCompleta(row) {
-        const codigo = row.querySelector('.codigo-input').value;
-        const producto = row.querySelector('.producto-select').value;
-        const cantidad = parseFloat(row.querySelector('.cantidad-input').value);
-        const precio = parseFloat(row.querySelector('.precio-input').value);
-        const total = parseFloat(row.querySelector('.total-input').value);
+        // Llamar a agregarFila nuevamente para intentar agregar una nueva fila si se cumplen las condiciones
+        agregarFila(true);
+    });
+}
 
-        return codigo && producto && cantidad && precio && total;
+// Función para actualizar el total de la venta sumando los totales de cada fila
+function actualizarTotalVenta() {
+    let totalVenta = 0;
+    const totalInputs = document.querySelectorAll('.total-input');
+    totalInputs.forEach(function (input) {
+        totalVenta += parseFloat(input.value) || 0;
+    });
+    totalVentaInput.value = totalVenta.toFixed(2); // Mostrar el total con 2 decimales
+    
+    // Llamamos a sincronizarImporte aquí para asegurar la actualización
+    sincronizarImporte();
+}
+
+// Función para verificar si una fila está completa y cambiar el botón a "-"
+function verificarFilaCompleta(row) {
+    if (filaCompleta(row)) {
+        const boton = row.querySelector('.btn-primary');
+        boton.textContent = '-';
+        boton.classList.remove('btn-primary');
+        boton.classList.add('btn-danger');
     }
+}
+
+// Función para verificar si una fila está completa
+function filaCompleta(row) {
+    const codigo = row.querySelector('.codigo-input').value.trim(); // Asegura que no esté vacío ni tenga solo espacios
+    const producto = row.querySelector('.producto-select').value;
+    const cantidad = parseFloat(row.querySelector('.cantidad-input').value);
+    const precio = parseFloat(row.querySelector('.precio-input').value);
+    const total = parseFloat(row.querySelector('.total-input').value);
+
+    // Verificar que 'codigo' y 'producto' no estén vacíos, y que 'cantidad', 'precio', y 'total' sean mayores a 0
+    return codigo !== "" && producto !== "" && cantidad > 0 && precio > 0 && total > 0;
+}
+
 
     // Función para limpiar una fila (primaria) en lugar de eliminarla
     function limpiarFila(row) {
