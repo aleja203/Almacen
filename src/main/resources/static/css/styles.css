@@ -1,4 +1,20 @@
-.footer {
+    .cliente-nombre {
+        margin-top: 10px;       /* Margen superior */
+        margin-bottom: 10px;    /* Margen inferior */
+        margin-left: 50px;
+        color: activeborder;         /* Color del texto */
+        font-size: 24px;        /* Tamaño de la fuente */
+        font-weight: bold;      /* Peso de la fuente */
+        text-align: center;     /* Alineación del texto */
+    }
+    .margen-buscador {
+        margin-top: 20px;   /* Margen superior */
+        margin-bottom: 0px; /* Margen inferior */
+        margin-left: 40px;   /* Margen izquierdo */
+        margin-right: 10px;  /* Margen derecho */
+    }
+
+        .footer {
         background-color: #f2f2f2;
         padding: 20px;
         text-align: center;

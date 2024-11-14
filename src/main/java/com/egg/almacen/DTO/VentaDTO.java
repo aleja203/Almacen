@@ -58,14 +58,14 @@ public class VentaDTO {
     }
 
     @Override
-public String toString() {
+    public String toString() {
     return "VentaDTO{" +
             "cliente=" + clienteId +
             ", observaciones='" + observaciones + '\'' +
             ", totalVenta=" + totalVenta +
             ", detalles=" + detalles +
             '}';
-}
+    }
 
 
     

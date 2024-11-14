@@ -4,6 +4,7 @@ package com.egg.almacen.Servicios;
 
 import com.egg.almacen.DTO.VentaDTO;
 import com.egg.almacen.Entidades.Cliente;
+import com.egg.almacen.Entidades.CuentaCorriente;
 import com.egg.almacen.Entidades.DetalleVenta;
 import com.egg.almacen.Entidades.FormaDePago;
 import com.egg.almacen.Entidades.FormaPagoVenta;
@@ -12,6 +13,7 @@ import com.egg.almacen.Entidades.Venta;
 import com.egg.almacen.Entidades.Producto;
 import com.egg.almacen.Excepciones.MiException;
 import com.egg.almacen.Repositorios.ClienteRepositorio;
+import com.egg.almacen.Repositorios.CuentaCorrienteRepositorio;
 import com.egg.almacen.Repositorios.DetalleVentaRepositorio;
 import com.egg.almacen.Repositorios.FormaDePagoRepositorio;
 import com.egg.almacen.Repositorios.MovimientoRepositorio;
@@ -46,8 +48,10 @@ public class VentaServicio {
     private MovimientoRepositorio movimientoRepositorio;
     @Autowired
     private ClienteRepositorio clienteRepositorio;
-        @Autowired
+    @Autowired
     private FormaDePagoRepositorio formaDePagoRepositorio;
+    @Autowired
+    private CuentaCorrienteRepositorio cuentaCorrienteRepositorio;
 
 @Transactional
 public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
@@ -55,23 +59,20 @@ public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
 
     try {
         Venta venta = new Venta();
+        final Cliente cliente;
 
-        // Verificar si el clienteId no es nulo ni vacío
         if (ventaDTO.getClienteId() != null) {
-            // Buscar el cliente por su ID
-            Cliente cliente = clienteRepositorio.findById(ventaDTO.getClienteId())
+            cliente = clienteRepositorio.findById(ventaDTO.getClienteId())
                     .orElseThrow(() -> new RuntimeException("Cliente no encontrado: " + ventaDTO.getClienteId()));
-            System.out.println("El cliente es: " + ventaDTO.getClienteId());
-            // Asignar el cliente encontrado
             venta.setCliente(cliente);
+        } else {
+            cliente = null;
         }
 
-        // Continuar con la asignación de los demás campos de la venta
         venta.setObservaciones(ventaDTO.getObservaciones());
         venta.setTotalVenta(ventaDTO.getTotalVenta());
-        venta.setFecha(new Date());  // Establecer la fecha actual
+        venta.setFecha(new Date());
 
-        // Convertir DTOs de detalles a entidades
         Set<DetalleVenta> detalles = ventaDTO.getDetalles().stream()
                 .map(detalleDTO -> {
                     DetalleVenta detalle = new DetalleVenta();
@@ -79,31 +80,31 @@ public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
                     detalle.setPrecioVenta(detalleDTO.getPrecioVenta());
                     detalle.setTotal(detalleDTO.getTotal());
 
-                    // Buscar el producto por código de barras
                     Producto producto = productoRepositorio.findByCodigo(detalleDTO.getProducto());
-
                     if (producto != null) {
                         producto.setExistencia(producto.getExistencia() - detalleDTO.getCantidad());
-
-                        // Guardar el producto con la nueva existencia
                         productoRepositorio.save(producto);
 
                         detalle.setProducto(producto);
-                        
-                        // Crear y guardar un movimiento para este detalle
+
                         Movimiento movimiento = new Movimiento();
+                        CuentaCorriente cuentaCorriente = new CuentaCorriente();
+
                         movimiento.setFecha(new Date());
                         movimiento.setTipo("VENTA");
-                        movimiento.setProvCli(venta.getCliente().getNombre());
+                        movimiento.setProvCli(cliente != null ? cliente.getNombre() : "Cliente no asignado");
+
+                        cuentaCorriente.setFecha(new Date());
+                        cuentaCorriente.setTipo("VENTA");
                         
-                        // Aquí guardamos la venta antes para tener su ID
+                        cuentaCorriente.setCliente(cliente != null ? cliente : null);
+
                         ventaRepositorio.save(venta);
-                        
-                        // Asegúrate de que el movimiento use el ID de la venta
-                        movimiento.setFactura(venta.getId());  // Establecer el ID de la venta
-                        
-                        // Establecer el nombre del producto (descripción) en el movimiento
-                        movimiento.setProducto(producto.getDescripcion());  // Cambiar de código a descripción
+
+                        movimiento.setFactura(venta.getId());
+                        cuentaCorriente.setFacturaRecibo(venta.getId());
+
+                        movimiento.setProducto(producto.getDescripcion());
                         movimiento.setCantidad(detalleDTO.getCantidad());
                         movimiento.setPrecio(detalleDTO.getPrecioVenta());
                         movimientoRepositorio.save(movimiento);
@@ -112,59 +113,70 @@ public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
                         throw new RuntimeException("Producto no encontrado: " + detalleDTO.getProducto());
                     }
 
-                    detalle.setVenta(venta);  // Establecer la relación bidireccional
+                    detalle.setVenta(venta);
                     return detalle;
                 })
                 .collect(Collectors.toSet());
 
         venta.setDetalles(detalles);
 
-        // Manejar las formas de pago
         Set<FormaPagoVenta> formasPago = ventaDTO.getFormasPago().stream()
                 .map(formaPagoDTO -> {
                     FormaPagoVenta formaPagoVenta = new FormaPagoVenta();
-
-                    System.out.println("Tipo en formaPagoDTO: " + formaPagoDTO.getTipoPago());
-                    System.out.println("FormaPago en formaPagoDTO: " + formaPagoDTO.getFormaDePago());
-
                     formaPagoVenta.setTipoPago(formaPagoDTO.getTipoPago());
 
-                    // Verificar si el id de FormaDePago no es nulo antes de buscar en la base de datos
                     if (formaPagoDTO.getFormaDePago() == null) {
                         throw new IllegalArgumentException("FormaDePagoId no puede ser null para tipo de pago " + formaPagoDTO.getTipoPago());
                     }
 
-                    // Obtener FormaDePago desde la base de datos
                     FormaDePago formaDePago = formaDePagoRepositorio.findById(formaPagoDTO.getFormaDePago())
                             .orElseThrow(() -> new EntityNotFoundException("FormaDePago no encontrada con id: " + formaPagoDTO.getFormaDePago()));
 
-                    formaPagoVenta.setFormaDePago(formaDePago); // Asignar la forma de pago persistente a formaPagoVenta
+                    formaPagoVenta.setFormaDePago(formaDePago);
                     formaPagoVenta.setImporte(formaPagoDTO.getImporte());
-                    formaPagoVenta.setVenta(venta); // Establecer la relación con la venta
+                    formaPagoVenta.setVenta(venta);
+
+                    System.out.println("Valor de tipoPago en formaPagoDTO: " + formaPagoDTO.getTipoPago());
+
+                    if ("CUENTA_CORRIENTE".equals(formaPagoDTO.getTipoPago().toString())) {
+                        CuentaCorriente cuentaCorriente = new CuentaCorriente();
+                        cuentaCorriente.setImporte(formaPagoDTO.getImporte());
+                        cuentaCorriente.setFecha(new Date());
+                        cuentaCorriente.setTipo("VENTA");
+                        
+                        cuentaCorriente.setCliente(cliente != null ? cliente : null);
+                        cuentaCorriente.setFacturaRecibo(venta.getId());
+
+                        // Actualizar saldo del cliente y guardar en repositorio
+                        cliente.setSaldo(cliente.getSaldo() - formaPagoDTO.getImporte());
+                        
+                        clienteRepositorio.save(cliente);
+                        cuentaCorrienteRepositorio.save(cuentaCorriente);
+                    }
+
                     return formaPagoVenta;
                 })
                 .collect(Collectors.toSet());
 
-        venta.setFormasPago(formasPago); // Asignar las formas de pago a la venta
+        venta.setFormasPago(formasPago);
 
-        
-
-        // Guardar la entidad Venta en la base de datos
         ventaRepositorio.save(venta);
 
-        // Devolver un mensaje de éxito
         response.put("message", "Venta registrada exitosamente.");
         return response;
     } catch (RuntimeException e) {
-        // Captura de errores específicos (Producto no encontrado o Cliente no encontrado)
         response.put("error", "Error al registrar la venta: " + e.getMessage());
         return response;
     } catch (Exception e) {
-        // Captura de otros errores generales
         response.put("error", "Error inesperado al registrar la venta.");
         return response;
     }
 }
+
+
+
+
+
 
 
     

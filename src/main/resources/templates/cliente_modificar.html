@@ -30,35 +30,48 @@
         <div class="container-fluid m-5 contenedor">
 
             <form class="formulario row g-3" th:action="@{/cliente/modificar/__${cliente.dni}__}" method="POST">
+                <div class="row">
 
 
+                    <input hidden th:value="${cliente.dni}" name="dni">
 
-                <input hidden th:value="${cliente.dni}" name="dni">
-                
-                <div class="col-md-6">
-                    <label for="nombre" class="mb-2">Nombre</label>
-                    <input th:value="${cliente.nombre}" type="text" class="form-control" name="nombre" oninput="this.value = this.value.toUpperCase();">
+                    <div class="col-md-6">
+                        <label for="nombre" class="mb-2">Nombre</label>
+                        <input th:value="${cliente.nombre}" type="text" class="form-control" name="nombre" oninput="this.value = this.value.toUpperCase();">
+                    </div>
+                                    <div class="col-md-6 mb-3">
+                    <label for="email" class="mb-2">Email</label>
+                    <input type="text" class="form-control" id="email" name="email" th:value="${cliente.email}">
                 </div>
-                
-                <button type="submit" class="btn btn-primary"> Modificar </button>
-            
-                <a th:href="@{/cliente/eliminar/{dni}(dni=${cliente.dni})}" class="btn btn-danger mt-3"
-                   onclick="return confirmDelete()">Eliminar</a>
-                <script>
-                function confirmDelete() {
-                    return confirm("¿Estás seguro de que deseas eliminar este cliente?");
-                }
-            </script>
-            
+                <div class="col-md-6 mb-3">
+                    <label for="domicilio" class="mb-2">Domicilio</label>
+                    <input type="text" class="form-control" id="domicilio" name="domicilio" th:value="${cliente.domicilio}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="telefono" class="mb-2">Teléfono</label>
+                    <input type="number" class="form-control" id="telefono" name="telefono" th:value="${cliente.telefono}">
+                </div>
+
+                    <button type="submit" class="btn btn-primary"> Modificar </button>
+
+                    <a th:href="@{/cliente/eliminar/{dni}(dni=${cliente.dni})}" class="btn btn-danger mt-3"
+                       onclick="return confirmDelete()">Eliminar</a>
+                    <script>
+                    function confirmDelete() {
+                        return confirm("¿Estás seguro de que deseas eliminar este cliente?");
+                    }
+                    </script>
+
+
+
+                    <div class="row mt-3">
+                        <div class="divVolver">
+                            <a th:href="@{/}" class="btn btn-secondary my-2 botonVolver botones">Volver</a>
+                        </div>
+                    </div>
+                </div>    
             </form>
-            
-            <div class="row mt-3">
-                <div class="divVolver">
-                    <a th:href="@{/}" class="btn btn-secondary my-2 botonVolver botones">Volver</a>
-                </div>
-            </div>
-        </div>    
-        
+        </div> 
 
         <footer th:replace= "/fragments/footer :: footer"></footer>
 

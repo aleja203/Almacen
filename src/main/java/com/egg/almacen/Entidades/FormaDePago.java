@@ -25,6 +25,10 @@ public class FormaDePago {
     @ManyToOne
     @JoinColumn(name = "venta_id")
     private Venta venta;
+    
+    @ManyToOne
+    @JoinColumn(name = "cobroa_id")
+    private Cobro cobro;
 
     public FormaDePago() {
     }

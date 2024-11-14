@@ -37,7 +37,9 @@
             <label for="clienteSelect">Cliente:</label>
             <select id="clienteSelect" class="form-control">
                 <option value="">Seleccionar Cliente</option>
-                <option th:each="cliente : ${clientes}" th:value="${cliente.dni}" th:text="${cliente.nombre}">
+                <option th:each="cliente : ${clientes}"
+                        th:value="${cliente.dni}"
+                        th:text="${cliente.nombre}">
                 </option>
             </select>
         </div>

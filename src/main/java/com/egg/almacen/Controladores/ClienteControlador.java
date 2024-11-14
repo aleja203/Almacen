@@ -2,13 +2,18 @@
 package com.egg.almacen.Controladores;
 
 import com.egg.almacen.Entidades.Cliente;
+import com.egg.almacen.Entidades.CuentaCorriente;
 import com.egg.almacen.Excepciones.MiException;
 import com.egg.almacen.Repositorios.ClienteRepositorio;
 import com.egg.almacen.Servicios.ClienteServicio;
+import com.egg.almacen.Servicios.CuentaCorrienteServicio;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,8 +26,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/cliente")
 public class ClienteControlador {
 
-//@Autowired
-//    private ClienteServicio clienteServicio;
+    @Autowired
+    private CuentaCorrienteServicio cuentaCorrienteServicio;
     
     @Autowired
     private ClienteRepositorio clienteRepositorio;
@@ -37,11 +42,14 @@ public class ClienteControlador {
         @PostMapping("/registro")
     public String registro(@RequestParam(required = false) Long dni, 
                            @RequestParam String nombre,
+                           @RequestParam(required = false) String email,
+                           @RequestParam(required = false) String domicilio,
+                           @RequestParam(required = false) Long telefono,
                            ModelMap modelo) {
 
         try {
 
-            clienteServicio.crearCliente(dni, nombre);
+            clienteServicio.crearCliente(dni, nombre, email, domicilio, telefono);
 
             modelo.put("exito", "El cliente fue cargado correctamente!");
 
@@ -85,6 +93,9 @@ public class ClienteControlador {
     @PostMapping("/modificar/{dni}")
     public String modificar(@PathVariable Long dni,
                             @RequestParam String nombre,
+                            @RequestParam(required = false) String email,
+                            @RequestParam(required = false) String domicilio,
+                            @RequestParam(required = false) Long telefono,
                             ModelMap modelo,
                             RedirectAttributes redirectAttributes) {
         try {
@@ -94,7 +105,7 @@ public class ClienteControlador {
             modelo.put("producto", clienteOptional.get());
             redirectAttributes.addFlashAttribute("exito", "Cliente actualizado exitosamente");
             
-            clienteServicio.modificarCliente(dni, nombre);
+            clienteServicio.modificarCliente(dni, nombre, email, domicilio, telefono);
             
             return "redirect:../lista";
         } catch (MiException ex) {
@@ -109,4 +120,44 @@ public class ClienteControlador {
         }
     }
     
+//    @GetMapping("/listarCtaCte/{dni}")
+//    public String listarCuentaCorriente(@PathVariable Long dni, Model model) {
+//        // Obtener todos los movimientos
+//        List<CuentaCorriente> cuentasCorrientes = cuentaCorrienteServicio.listarCuentasCorrientesPorDni(dni);
+//
+//// Obtener el nombre del cliente desde el primer elemento, si existen movimientos
+//        String nombreCliente = cuentasCorrientes != null && !cuentasCorrientes.isEmpty() && cuentasCorrientes.get(0).getCliente() != null 
+//        
+//        ? cuentasCorrientes.get(0).getCliente().getNombre() 
+//        : "Sin cliente asignado";
+//        
+//        // Agregar los datos al modelo para ser usados en el frontend
+//        model.addAttribute("cuentasCorrientes", cuentasCorrientes);
+//        model.addAttribute("nombreCliente", nombreCliente);
+//        
+//        return "cuentaCorriente_list";  // La vista de Thymeleaf para mostrar la lista de movimientos
+//    }
+    
+        @GetMapping("/listarCtaCte/{dni}")
+public String listarCuentaCorriente(@PathVariable Long dni, Model model) {
+    // Obtener todos los movimientos
+    List<CuentaCorriente> cuentasCorrientes = cuentaCorrienteServicio.listarCuentasCorrientesPorDni(dni);
+
+    // Obtener el nombre del cliente y el saldo, si existen movimientos
+    String nombreCliente = "Sin cliente asignado";
+    Double saldoCliente = 0.0;
+
+    if (cuentasCorrientes != null && !cuentasCorrientes.isEmpty() && cuentasCorrientes.get(0).getCliente() != null) {
+        Cliente cliente = cuentasCorrientes.get(0).getCliente();
+        nombreCliente = cliente.getNombre();
+        saldoCliente = cliente.getSaldo(); // Suponiendo que `Cliente` tiene un método `getSaldo()`
+    }
+    
+    // Agregar los datos al modelo para ser usados en el frontend
+    model.addAttribute("cuentasCorrientes", cuentasCorrientes);
+    model.addAttribute("nombreCliente", nombreCliente);
+    model.addAttribute("saldoCliente", saldoCliente);
+    
+    return "cuentaCorriente_list";  // La vista de Thymeleaf para mostrar la lista de movimientos
+}
 }
