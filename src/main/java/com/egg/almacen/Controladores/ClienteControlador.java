@@ -7,6 +7,7 @@ import com.egg.almacen.Excepciones.MiException;
 import com.egg.almacen.Repositorios.ClienteRepositorio;
 import com.egg.almacen.Servicios.ClienteServicio;
 import com.egg.almacen.Servicios.CuentaCorrienteServicio;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -125,39 +126,60 @@ public class ClienteControlador {
 //        // Obtener todos los movimientos
 //        List<CuentaCorriente> cuentasCorrientes = cuentaCorrienteServicio.listarCuentasCorrientesPorDni(dni);
 //
-//// Obtener el nombre del cliente desde el primer elemento, si existen movimientos
-//        String nombreCliente = cuentasCorrientes != null && !cuentasCorrientes.isEmpty() && cuentasCorrientes.get(0).getCliente() != null 
-//        
-//        ? cuentasCorrientes.get(0).getCliente().getNombre() 
-//        : "Sin cliente asignado";
-//        
+//        // Obtener el nombre del cliente y el saldo, si existen movimientos
+//        String nombreCliente = "Sin cliente asignado";
+//        Double saldoCliente = 0.0;
+//
+//        if (cuentasCorrientes != null && !cuentasCorrientes.isEmpty() && cuentasCorrientes.get(0).getCliente() != null) {
+//            Cliente cliente = cuentasCorrientes.get(0).getCliente();
+//            nombreCliente = cliente.getNombre();
+//            saldoCliente = cliente.getSaldo(); // Suponiendo que `Cliente` tiene un método `getSaldo()`
+//        }
+//
 //        // Agregar los datos al modelo para ser usados en el frontend
 //        model.addAttribute("cuentasCorrientes", cuentasCorrientes);
 //        model.addAttribute("nombreCliente", nombreCliente);
-//        
+//        model.addAttribute("saldoCliente", saldoCliente);
+//
 //        return "cuentaCorriente_list";  // La vista de Thymeleaf para mostrar la lista de movimientos
 //    }
-    
-        @GetMapping("/listarCtaCte/{dni}")
-public String listarCuentaCorriente(@PathVariable Long dni, Model model) {
-    // Obtener todos los movimientos
-    List<CuentaCorriente> cuentasCorrientes = cuentaCorrienteServicio.listarCuentasCorrientesPorDni(dni);
 
-    // Obtener el nombre del cliente y el saldo, si existen movimientos
+@GetMapping("/listarCtaCte/{dni}")
+public String listarCuentaCorriente(@PathVariable Long dni, Model model) {
+    
+     List<CuentaCorriente> cuentasCorrientes = cuentaCorrienteServicio.listarCuentaCorriente(dni);
+    
+
+    // Calcular los saldos
+    cuentasCorrientes = cuentaCorrienteServicio.calcularSaldos(cuentasCorrientes);
+
     String nombreCliente = "Sin cliente asignado";
     Double saldoCliente = 0.0;
 
     if (cuentasCorrientes != null && !cuentasCorrientes.isEmpty() && cuentasCorrientes.get(0).getCliente() != null) {
         Cliente cliente = cuentasCorrientes.get(0).getCliente();
         nombreCliente = cliente.getNombre();
-        saldoCliente = cliente.getSaldo(); // Suponiendo que `Cliente` tiene un método `getSaldo()`
+        saldoCliente = cliente.getSaldo(); // Obtener saldo inicial del cliente
     }
-    
+
     // Agregar los datos al modelo para ser usados en el frontend
     model.addAttribute("cuentasCorrientes", cuentasCorrientes);
     model.addAttribute("nombreCliente", nombreCliente);
     model.addAttribute("saldoCliente", saldoCliente);
-    
-    return "cuentaCorriente_list";  // La vista de Thymeleaf para mostrar la lista de movimientos
+
+    return "cuentaCorriente_list"; // La vista de Thymeleaf para mostrar la lista de movimientos
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

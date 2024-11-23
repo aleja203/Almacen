@@ -11,7 +11,9 @@ import com.egg.almacen.Repositorios.SubRubroRepositorio;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -135,5 +137,16 @@ public class ProductoServicio {
         
         productoRepositorio.delete(producto);
     }
-        
+      
+        public Map<String, Double> obtenerExistenciasActuales() {
+        // Consultar las existencias actuales desde el repositorio
+        List<Object[]> existencias = productoRepositorio.obtenerExistenciasActuales();
+
+        // Transformar la lista de resultados en un Map
+        return existencias.stream()
+                .collect(Collectors.toMap(
+                        e -> (String) e[0], // Nombre del producto
+                        e -> (Double) e[1]  // Existencia
+                ));
+    }
 }

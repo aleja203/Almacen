@@ -71,10 +71,10 @@
                         <th scope="col">Producto</th>
                         <th scope="col">Rubro</th>
                         <th scope="col">Subrubro</th>
-                        <th scope="col">Costo</th>
-                        <th scope="col">Precio de venta</th>
-                        <th scope="col">Stock</th>
-                        <th scope="col">Acciones</th>
+                        <th class="text-center" scope="col">Costo</th>
+                        <th class="text-center" scope="col">Precio de venta</th>
+                        <th class="text-center" scope="col">Stock</th>
+                        <th class="text-center" scope="col">Acciones</th>
                         <!--<th scope="col" sec:authorize="hasRole('ADMIN')" >Acciones</th>-->
 
                     </tr>
@@ -85,11 +85,11 @@
                         <td th:text="${producto.descripcion}" th:attr="data-producto-id=${producto.codigo}"></td>
                         <td th:text="${producto.rubro.nombre}" th:attr="data-rubro-id=${producto.rubro.id}"></td>
                         <td th:text="${producto.subRubro.nombre}" th:attr="data-subrubro-id=${producto.subRubro.id}"></td>
-                        <td th:text="${producto.costo}"></td>
-                        <td th:text="${producto.precioVenta}"></td>
-                        <td th:text="${producto.existencia}"></td>
+                        <td class="text-center" th:text="${#numbers.formatDecimal(producto.costo, 0, 0)}"></td>
+                        <td class="text-center" th:text="${#numbers.formatDecimal(producto.precioVenta, 0, 0)}"></td>
+                        <td class="text-center" th:text="${#numbers.formatDecimal(producto.existencia, 0, 0)}"></td>
 
-                        <td th:attr="data-codigo-barra=${producto.codigo}">
+                        <td class="text-center" th:attr="data-codigo-barra=${producto.codigo}">
                             <a th:href="@{/producto/modificar/__${producto.codigo}__}">
                                 <i class="fas fa-feather-alt"></i> Modificar/Eliminar
                             </a>

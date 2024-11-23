@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 public class CuentaCorriente {
@@ -29,6 +30,9 @@ public class CuentaCorriente {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
     private Double importe;
+    
+    @Transient
+    private Double saldoRestante;
 
     public CuentaCorriente() {
     }
@@ -81,6 +85,14 @@ public class CuentaCorriente {
 
     public void setImporte(Double importe) {
         this.importe = importe;
+    }
+
+    public Double getSaldoRestante() {
+        return saldoRestante;   
+    }
+
+    public void setSaldoRestante(Double saldoRestante) {
+        this.saldoRestante = saldoRestante;
     }
     
     

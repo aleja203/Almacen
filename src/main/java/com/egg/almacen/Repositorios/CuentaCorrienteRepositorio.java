@@ -6,8 +6,9 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface CuentaCorrienteRepositorio extends JpaRepository<CuentaCorriente, Long>{
+public interface CuentaCorrienteRepositorio extends JpaRepository<CuentaCorriente, Long> {
+    //List<CuentaCorriente> findAllOrderedByIdDesc();
+    List<CuentaCorriente> findByCliente_DniOrderByIdDesc(Long dni);
     
-    List<CuentaCorriente> findByClienteDni(Long dni);
     
 }

@@ -41,16 +41,16 @@
                 <label for="productoSelect">Producto:</label>
                 <select id="productoSelect" class="form-control">
                     <option value="">Seleccionar Producto</option>
-                    <option th:each="producto : ${productos}" th:value="${producto}" th:text="${producto}"></option>
+                    <option th:each="producto : ${productosNombres}" th:value="${producto}" th:text="${producto}"></option>
                 </select>
             </div>
             <div class="col-md-2">
                 <label for="fechaDesde">Fecha Desde:</label>
-                <input type="text" id="fechaDesde" class="form-control" placeholder="dd/mm/aaaa" onfocus="(this.type='date')" required>
+                <input type="date" id="fechaDesde" class="form-control" placeholder="dd/mm/aaaa" onfocus="(this.type='date')" required>
             </div>
             <div class="col-md-2">
                 <label for="fechaHasta">Fecha Hasta:</label>
-                <input type="text" id="fechaHasta" class="form-control" placeholder="dd/mm/aaaa" onfocus="(this.type='date')" required>
+                <input type="date" id="fechaHasta" class="form-control" placeholder="dd/mm/aaaa" onfocus="(this.type='date')" required>
             </div>
         </div>
 
@@ -64,7 +64,7 @@
         <!-- Tabla -->
         <div class="table-container">
             <table class="table table-dark">
-                <thead>
+                <thead class="text-center">
                     <tr>
                         <th scope="col">Fecha</th>
                         <th scope="col">Tipo</th>
@@ -72,18 +72,19 @@
                         <th scope="col">Factura</th>
                         <th scope="col">Producto</th>
                         <th scope="col">Cantidad</th>
-                        <th scope="col">Precio</th>
+                        <th scope="col">Stock</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr th:each="movimiento : ${movimientos}">
+                <tbody class="text-center">
+                    <tr data-id="${movimiento.id}" th:each="movimiento : ${movimientos}">	
                         <td th:text="${#dates.format(movimiento.fecha, 'dd/MM/yyyy')}"></td>
                         <td th:text="${movimiento.tipo}"></td>
                         <td th:text="${movimiento.provCli}"></td>
                         <td th:text="${movimiento.factura}"></td>
                         <td th:text="${movimiento.producto}"></td>
-                        <td th:text="${movimiento.cantidad}"></td>
-                        <td th:text="${movimiento.precio}"></td>
+                        <td th:text="${#numbers.formatDecimal(movimiento.cantidad, 0, 0)}"></td>
+                        <td th:text="${#numbers.formatDecimal(movimiento.existencia, 0, 0)}"></td>
+                        
                     </tr>
                 </tbody>
             </table>

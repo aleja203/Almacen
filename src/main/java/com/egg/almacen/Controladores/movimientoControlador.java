@@ -1,8 +1,15 @@
 package com.egg.almacen.Controladores;
 
 import com.egg.almacen.Entidades.Movimiento;
+import com.egg.almacen.Entidades.Producto;
+import com.egg.almacen.Repositorios.ProductoRepositorio;
 import com.egg.almacen.Servicios.MovimientoServicio;
+import com.egg.almacen.Servicios.ProductoServicio;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,33 +24,38 @@ public class MovimientoControlador {
 
     @Autowired
     private MovimientoServicio movimientoServicio;
+    @Autowired
+    private ProductoServicio productoServicio;
+    @Autowired
+    private ProductoRepositorio productoRepositorio;
         
-    @GetMapping("/lista")
-    public String listarMovimientos(Model model) {
-        // Obtener todos los movimientos
-        List<Movimiento> movimientos = movimientoServicio.listarMovimiento();
-        
-        // Extraer los valores únicos de Proveedor/Cliente, Tipo y Producto
-        Set<String> proveedoresClientes = movimientos.stream()
-            .map(Movimiento::getProvCli)
-            .collect(Collectors.toSet());
 
-        Set<String> productos = movimientos.stream()
-            .map(Movimiento::getProducto)
-            .collect(Collectors.toSet());
+@GetMapping("/lista")
+public String listarMovimientos(Model model) {
+    // Obtener todos los movimientos
+    List<Movimiento> movimientos = movimientoServicio.listarMovimiento();
 
-        Set<String> tipos = movimientos.stream()
-            .map(Movimiento::getTipo)
-            .collect(Collectors.toSet());
+    // Calcular existencias cronológicamente
+    movimientos = movimientoServicio.calcularExistencias(movimientos);
 
-        // Agregar los datos al modelo para ser usados en el frontend
-        model.addAttribute("movimientos", movimientos);
-        model.addAttribute("proveedoresClientes", proveedoresClientes); // Lista de proveedores/clientes (String)
-        model.addAttribute("productos", productos); // Lista de productos (String)
-        model.addAttribute("tipos", tipos); // Lista de tipos (VENTA, COMPRA) (String)
+    // Extraer valores únicos para los filtros
+    Set<String> proveedoresClientes = movimientos.stream()
+        .map(Movimiento::getProvCli)
+        .collect(Collectors.toSet());
+    Set<String> productosNombres = movimientos.stream()
+        .map(Movimiento::getProducto)
+        .collect(Collectors.toSet());
+    Set<String> tipos = movimientos.stream()
+        .map(Movimiento::getTipo)
+        .collect(Collectors.toSet());
 
-        return "movimiento_list";  // La vista de Thymeleaf para mostrar la lista de movimientos
-    }
+    // Agregar datos al modelo
+    model.addAttribute("movimientos", movimientos);
+    model.addAttribute("proveedoresClientes", proveedoresClientes);
+    model.addAttribute("productosNombres", productosNombres);
+    model.addAttribute("tipos", tipos);
 
-    
+    return "movimiento_list"; // Vista de Thymeleaf
+}
+
 }

@@ -94,7 +94,7 @@ public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
                         movimiento.setTipo("VENTA");
                         movimiento.setProvCli(cliente != null ? cliente.getNombre() : "Cliente no asignado");
 
-                        cuentaCorriente.setFecha(new Date());
+                        // cuentaCorriente.setFecha(new Date());
                         cuentaCorriente.setTipo("VENTA");
                         
                         cuentaCorriente.setCliente(cliente != null ? cliente : null);
@@ -105,7 +105,12 @@ public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
                         cuentaCorriente.setFacturaRecibo(venta.getId());
 
                         movimiento.setProducto(producto.getDescripcion());
-                        movimiento.setCantidad(detalleDTO.getCantidad());
+                        // Si el movimiento es una venta, la cantidad se guarda como negativa
+                        movimiento.setCantidad("VENTA".equalsIgnoreCase(movimiento.getTipo())
+                                ? -detalleDTO.getCantidad()
+                                : detalleDTO.getCantidad());
+
+                        
                         movimiento.setPrecio(detalleDTO.getPrecioVenta());
                         movimientoRepositorio.save(movimiento);
 
@@ -140,7 +145,10 @@ public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
 
                     if ("CUENTA_CORRIENTE".equals(formaPagoDTO.getTipoPago().toString())) {
                         CuentaCorriente cuentaCorriente = new CuentaCorriente();
-                        cuentaCorriente.setImporte(formaPagoDTO.getImporte());
+                        //cuentaCorriente.setImporte(formaPagoDTO.getImporte());
+                        // Asegurarnos de que el importe se almacene como negativo
+                        double importeNegativo = formaPagoDTO.getImporte() > 0 ? -formaPagoDTO.getImporte() : formaPagoDTO.getImporte();
+                        cuentaCorriente.setImporte(importeNegativo);
                         cuentaCorriente.setFecha(new Date());
                         cuentaCorriente.setTipo("VENTA");
                         
@@ -312,7 +320,7 @@ public Map<String, Object> crearVenta(VentaDTO ventaDTO) {
     public List<Venta> listarVenta() {
     List<Venta> ventas =  new ArrayList();
        
-       ventas = ventaRepositorio.findAll();
+       ventas = ventaRepositorio.findAllByOrderByFechaDesc();
        
        return ventas; 
 }

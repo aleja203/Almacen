@@ -31,8 +31,8 @@
 
             <div class="col-md-6">
                 <label for="proveedorSelect" class="mb-2">Proveedor</label>
-                <select name="proveedor" id="proveedorSelect" class="form-control">
-                    <option value="">Seleccionar Proveedor</option>
+                <select name="proveedor" id="proveedorSelect" class="form-control" required>
+                    <option value="" disabled selected>Seleccionar Proveedor</option>
                     <option th:each="proveedor : ${proveedores}"
                             th:value="${proveedor.id}"
                             th:text="${proveedor.nombre}">

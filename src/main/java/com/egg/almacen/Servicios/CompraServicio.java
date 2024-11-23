@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -165,7 +166,7 @@ public class CompraServicio {
                     .orElseThrow(() -> new RuntimeException("Compra no encontrada: " + compraId));
             
             // Obtener todos los movimientos relacionados con esta compra por su factura (ID de compra)
-            List<Movimiento> movimientos = movimientoRepositorio.findByFactura(compraId);
+            List<Movimiento> movimientos = movimientoRepositorio.findAll();
         
             // Eliminar todos los movimientos asociados a la compra
             for (Movimiento movimiento : movimientos) {
@@ -209,7 +210,8 @@ public class CompraServicio {
     public List<Compra> listarCompra() {
     List<Compra> compras =  new ArrayList();
        
-       compras = compraRepositorio.findAll();
+       //compras = compraRepositorio.findAll();
+       compras = compraRepositorio.findAll(Sort.by(Sort.Direction.DESC, "fecha"));
        
        return compras; 
 }

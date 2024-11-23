@@ -1,4 +1,10 @@
-    .cliente-nombre {
+/*    .alinear-valores {
+    text-align: right !important;
+    margin-right: -40px !important;
+
+    }*/
+
+.cliente-nombre {
         margin-top: 10px;       /* Margen superior */
         margin-bottom: 10px;    /* Margen inferior */
         margin-left: 50px;

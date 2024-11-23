@@ -74,7 +74,8 @@
                         <td th:text="${#dates.format(venta.fecha, 'dd/MM/yyyy')}"></td>
                         <td th:text="${venta.cliente.nombre}"></td>
                         <td th:text="${venta['id']}"></td>
-                        <td th:text="${venta['totalVenta']}"></td>
+                        <!--<td th:text="${venta['totalVenta']}"></td>-->
+                        <td th:text="${#numbers.formatDecimal(venta['totalVenta'], 0, 0)}"></td>
                         <td th:text="${venta['observaciones']}"></td>
                         <td>
                             <a th:href="@{/venta/eliminar/{id}(id=${venta['id']})}" onclick="return confirmDelete()">

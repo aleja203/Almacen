@@ -38,19 +38,10 @@
                 <label for="fechaHasta">Fecha Hasta:</label>
                 <input type="text" id="fechaHasta" class="form-control" placeholder="dd/mm/aaaa" onfocus="(this.type='date')" required>
             </div>
+            
+    
+
         </div>
-
-        <!-- Botón de reiniciar filtros -->
-<!--        <div class="row justify-content-center mb-3">
-            <div class="col-auto">
-                <a th:href="@{/movimiento/listaDetalle}" class="btn btn-secondary btn-sm">Reiniciar filtros</a>
-            </div>
-        </div>-->
-        
-<!--        <h2 class="cliente-nombre" th:text="'Cliente: ' + ${nombreCliente}"></h2>
-         <p class="cliente-nombre" th:text="'Saldo actual: ' + ${saldoCliente}"></p>
-         <p class="cliente-nombre" th:text="'Saldo actual: ' + ${#numbers.formatDecimal(saldoCliente, 0, 0)}"></p>-->
-
 
 
         <!-- Tabla -->
@@ -60,8 +51,9 @@
                     <tr>
                         <th scope="col">Fecha</th>
                         <th scope="col">Tipo</th>
-                        <th scope="col">Factura/Recibo</th>
-                        <th scope="col">Importe</th>
+                        <th scope="col">Factura/R   ecibo</th>
+                        <th class="text-center" scope="col">Importe</th>
+                        <th class="text-center" scope="col">Saldo</th>
                         <th scope="col">Acciones</th>
                     </tr>
                 </thead>
@@ -69,10 +61,10 @@
                     <tr th:each="cuentaCorriente : ${cuentasCorrientes}">
                         <td th:text="${#dates.format(cuentaCorriente.fecha, 'dd/MM/yyyy')}"></td>
                         <td th:text="${cuentaCorriente.tipo}"></td>
-                        <td th:text="${cuentaCorriente.facturaRecibo}"></td>
-                        <!--<td th:text="${cuentaCorriente.importe}"></td>-->
-                        <td th:text="${#numbers.formatDecimal(cuentaCorriente.importe, 0, 0)}"></td>
-                        
+                        <td th:text="${cuentaCorriente.tipo == 'VENTA' ? 'Factura Nº ' + cuentaCorriente.facturaRecibo : 'Recibo Nº ' + cuentaCorriente.facturaRecibo}"></td>
+                        <td class="text-center" th:text="${#numbers.formatDecimal(cuentaCorriente.importe, 0, 0)}"></td>
+                            <td class="text-center" th:text="${#numbers.formatDecimal(cuentaCorriente.saldoRestante, 0, 0)}"></td>
+
                         <td>
                             <a th:href="@{/cobro/ingresar/{dni}(dni=${cuentaCorriente.cliente.dni})}">
                                 <i class="fas fa-feather-alt"></i> Ingresar pago

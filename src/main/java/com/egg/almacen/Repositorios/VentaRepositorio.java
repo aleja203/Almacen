@@ -17,4 +17,6 @@ public interface VentaRepositorio extends JpaRepository<Venta, Long>{
     @Query("SELECT v FROM Venta v JOIN FETCH v.formasPago f JOIN FETCH v.cliente c")
     List<Venta> listarConFormasPago();
     
+    List<Venta> findAllByOrderByFechaDesc();
+    
 }

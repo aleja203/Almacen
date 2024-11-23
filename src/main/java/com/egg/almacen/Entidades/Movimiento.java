@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 public class Movimiento {
@@ -32,6 +33,9 @@ public class Movimiento {
         
     private Double cantidad;
     private Double precio;
+    
+    @Transient
+    private Double existencia;
     
     public Movimiento() {
     }
@@ -98,6 +102,14 @@ public class Movimiento {
 
     public void setPrecio(Double precio) {
         this.precio = precio;
+    }
+
+    public Double getExistencia() {
+        return existencia;
+    }
+
+    public void setExistencia(Double existencia) {
+        this.existencia = existencia;
     }
 
     
